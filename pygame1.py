@@ -24,7 +24,7 @@ enemy_pos = [400, 100, 30, 30]
 gameDisplay = pygame.display.set_mode((800,600))
 pygame.display.set_caption('game_of_the_bloxx')
 
-
+#delete this comment
 gameExit = False
 
 while not gameExit:
