@@ -32,7 +32,8 @@ def platform_detect(squareA, squareB):
         xminA = squareA[0]
         xmaxB = platform[0] + platform[2]
         xmaxA = squareA[0] + squareA[2]
-        if ((ytopB >= ybotA and ytopB <= ybotA + 11) and ((xminB <= xminA and xmaxB >= xminA) or (xminB <= xmaxA and xmaxB >= xmaxA))):
+        if ((ytopB >= ybotA and ytopB <= ybotA + 11) and ((xminB <= xminA and xmaxB >= xminA) or (xminB <= xmaxA and xmaxB >= xmaxA)\
+                or (xminA <= xminB and xmaxA >= xminB) or (xminA <= xmaxB and xmaxA >= xmaxB))):
             return_value = True
             ytopBVal = ytopB
     return [return_value, ytopBVal]

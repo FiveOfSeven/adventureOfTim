@@ -14,9 +14,15 @@ def platformer(pygame, dataArray):
     platformerExit = False
     jumpVelocity = 0
     jumpRecover = 0
+    level1Platforms = [[400, 500, 300, 10], [100, 450, 300, 10], [400, 400, 50, 10], [300, 350, 50, 10], [200, 300, 50, 10], [100, 250, 50, 10], \
+            [0, 200, 50, 10], [100, 150, 50, 10], [200, 100, 50, 10], [300, 50, 50, 10]]
+    level2Platforms = [[400, 500, 300, 10], [500, 450, 10, 10], [400, 400, 10, 10], [300, 350, 10, 10], [200, 300, 10, 10], [100, 250, 10, 10], \
+            [0, 200, 10, 10], [100, 150, 10, 10], [200, 100, 10, 10], [300, 50, 10, 10]]
     platforms_pos = [[400, 500, 300, 10], [100, 450, 300, 10], [400, 400, 50, 10], [300, 350, 50, 10], [200, 300, 50, 10], [100, 250, 50, 10], \
             [0, 200, 50, 10], [100, 150, 50, 10], [200, 100, 50, 10], [300, 50, 50, 10]]
     win_box = [500, 200, 20, 20]
+    win_box_level2 = [400, 100, 10, 10]
+    level = 1
     while not platformerExit:
 	for event in pygame.event.get():
 	    if event.type == pygame.QUIT:
@@ -25,12 +31,18 @@ def platformer(pygame, dataArray):
 	pressed = pygame.key.get_pressed()
 	gameDisplay.fill((0, 50, 0))
         pygame.draw.rect(gameDisplay, (255, 255, 0), [dataArray[0][0], dataArray[0][1], 20, 20])
-        pygame.draw.rect(gameDisplay, (50, 0, 0), [win_box[0], win_box[1], win_box[2], win_box[3]])
+        if level == 1:
+            pygame.draw.rect(gameDisplay, (200, 0, 0), [win_box[0], win_box[1], win_box[2], win_box[3]])
+        elif level ==2:
+            pygame.draw.rect(gameDisplay, (200, 0, 0), [win_box_level2[0], win_box_level2[1], win_box_level2[2], win_box_level2[3]])
         for plat_pos in platforms_pos: # draw platforms
             pygame.draw.rect(gameDisplay, (255, 100, 200), [plat_pos[0], plat_pos[1], plat_pos[2], plat_pos[3]])
         if jumpRecover > 0:
             jumpRecover -= 1
-        if col_detect(dataArray[0], win_box):
+        if col_detect(dataArray[0], win_box) and level == 1:
+            platforms_pos = level2Platforms
+            level = 2
+        elif col_detect(dataArray[0], win_box_level2) and level == 2:
             platformerExit = True
 	if pressed[pygame.K_a]:
 	    dataArray[0][0] -= 4
