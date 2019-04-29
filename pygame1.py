@@ -16,7 +16,7 @@ def threeD(pygame, dataArray):
     vanishPoint = [400, 300, 0]
     spectator = [400, 150, 10]
     # 4 points of square
-    dSquare = [[350, 500, -10], [450, 500, -10], [450, 600, -10], [350, 600, -10]]
+    dSquare = [[350, 500, -50], [450, 500, -50], [450, 600, -50], [350, 600, -50]]
     ppSquare = [[350, 500, -10], [450, 500, -10], [450, 600, -10], [350, 600, -10]]
     while not threeDExit:
 	for event in pygame.event.get():
@@ -43,6 +43,24 @@ def threeD(pygame, dataArray):
         # (x - x1)/(x2 - x1) = (y - y1)/(y2 - y1) = (z - z1)/(z2 - z1) = c 
 	if pressed[pygame.K_w]:
 	    dSquare[0][2] -= 10
+	    dSquare[1][2] -= 10
+	    dSquare[2][2] -= 10
+	    dSquare[3][2] -= 10
+	if pressed[pygame.K_s] and dSquare[0][2] < 0:
+	    dSquare[0][2] += 10
+	    dSquare[1][2] += 10
+	    dSquare[2][2] += 10
+	    dSquare[3][2] += 10
+	if pressed[pygame.K_a]:
+	    dSquare[0][0] -= 10
+	    dSquare[1][0] -= 10
+	    dSquare[2][0] -= 10
+	    dSquare[3][0] -= 10
+	if pressed[pygame.K_d]:
+	    dSquare[0][0] += 10
+	    dSquare[1][0] += 10
+	    dSquare[2][0] += 10
+	    dSquare[3][0] += 10
         for index, point in enumerate(dSquare):
             print("index: ", index)
             # sub nothing = point; sub1 is where z = 0; sub2 is spectator
@@ -54,6 +72,11 @@ def threeD(pygame, dataArray):
             # x1 = (cx2 - x) / (c - 1)
             x1 = (c * spectator[0] - point[0]) / (c - 1)
             y1 = (c * spectator[1] - point[1]) / (c - 1)
+            print("point[2]: ", point[2])
+            print("spectator[2]: ", spectator[2])
+            print("c: ", c)
+            print("x1: ", x1)
+            print("y1: ", y1)
             ppSquare[index] = [x1, y1, 0]
             print("ppSquare[index]: ", ppSquare[index])
             print("point[0]: ", point[0])
