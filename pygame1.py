@@ -9,8 +9,69 @@ from defsPygame1 import col_detect, platform_detect
 
 pygame.init()
 
+
+def threeD(pygame, dataArray):
+    print("hello threeD")
+    threeDExit = False
+    vanishPoint = [400, 300, 0]
+    spectator = [200, 150, 10]
+    # 4 points of square
+    dSquare = [[350, 500, -10], [450, 500, -10], [450, 600, -10], [350, 600, -10]]
+    ppSquare = [[350, 500, -10], [450, 500, -10], [450, 600, -10], [350, 600, -10]]
+    while not threeDExit:
+	for event in pygame.event.get():
+	    if event.type == pygame.QUIT:
+                threeDExit = True
+	pressed = pygame.key.get_pressed()
+	gameDisplay.fill((100, 100, 100))
+
+        # Components of perspective
+        # 3d line math: https://brilliant.org/wiki/3d-coordinate-geometry-equation-of-a-line/
+        # Get the picture plane square (ppSquare) of a square in the distance (dSquare)
+        # x, y, z; positive: x, right; y, down; z, backwards away from screen;
+        # ((x - x1) / l) = ((y -y1) / m) = ((z - z1) / n) = c
+        # l = x1 - x
+        # m = y1 - y
+        # n = z1 - z
+        # c = ((z -z1) / n)
+        # x = cl + x1
+        # y = cm + y1
+        # x is the x value of dSquare, and x1 is the x value of spectator
+	if pressed[pygame.K_w]:
+	    dSquare[0][2] -= 10
+        for index, point in enumerate(dSquare):
+            l = spectator[0] - point[0]
+            m = spectator[1] - point[1]
+            n = spectator[2] - 0
+            #l =  point[0] - spectator[0]
+            #m =  point[1] - spectator[1]
+            #n =  point[2] - spectator[2]
+            c = ((point[2] - spectator[2]) / n)
+            x = (c * l) + spectator[0]
+            y = (c * m) + spectator[1]
+            ppSquare[index] = [x, y, 0]
+            print ("c: ", c)
+            print ("l: ", l)
+            print ("m: ", m)
+            print ("n: ", n)
+            print ("point[2]: ", point[2])
+            print ("dz: ", dSquare[0][2])
+            print ("dx: ", dSquare[0][0])
+            print ("ppx: ", x)
+            print ("ppy: ", y)
+
+
+
+        #pygame.draw.polygon(gameDisplay, [50, 0, 150], ((350, 700), (100, 50), (100, 100), (50, 100)))
+        pygame.draw.polygon(gameDisplay, [50, 0, 150], ((ppSquare[0][0], ppSquare[0][1]), (ppSquare[1][0], \
+                ppSquare[1][1]), (ppSquare[2][0], ppSquare[2][1]), (ppSquare[3][0], ppSquare[3][1])))
+	time.sleep(.01)
+	pygame.display.update()
+
+
 def platformer(pygame, dataArray):
     print("hello platformer")
+    threeD(pygame, dataArray)
     platformerExit = False
     jumpVelocity = 0
     jumpRecover = 0
@@ -26,7 +87,6 @@ def platformer(pygame, dataArray):
     while not platformerExit:
 	for event in pygame.event.get():
 	    if event.type == pygame.QUIT:
-	        gameExit = True
                 platformerExit = True
 	pressed = pygame.key.get_pressed()
 	gameDisplay.fill((0, 50, 0))
