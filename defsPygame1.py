@@ -21,3 +21,18 @@ def col_detect(squareA, squareB):
             return_value = True
     return return_value 
 
+def platform_detect(squareA, squareB):
+    #squareA is the player, squareB is the platform
+    return_value = False
+    ytopBVal = -300
+    for platform in squareB:
+        ytopB = platform[1]
+        ybotA = squareA[1] + squareA[3]
+        xminB = platform[0]
+        xminA = squareA[0]
+        xmaxB = platform[0] + platform[2]
+        xmaxA = squareA[0] + squareA[2]
+        if ((ytopB >= ybotA and ytopB <= ybotA + 11) and ((xminB <= xminA and xmaxB >= xminA) or (xminB <= xmaxA and xmaxB >= xmaxA))):
+            return_value = True
+            ytopBVal = ytopB
+    return [return_value, ytopBVal]
