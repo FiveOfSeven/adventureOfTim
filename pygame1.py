@@ -5,10 +5,35 @@ import time
 import sys
 sys.path.insert(0, './gameClasses')
 from Enemy import Enemy
-
 from defsPygame1 import col_detect
 
 pygame.init()
+
+def platformer(pygame, dataArray):
+    print("hello platformer")
+    platformerExit = False
+    jumpVelocity = 0
+    while not platformerExit:
+	for event in pygame.event.get():
+	    if event.type == pygame.QUIT:
+	        gameExit = True
+                platformerExit = True
+	pressed = pygame.key.get_pressed()
+	gameDisplay.fill((0, 50, 0))
+        pygame.draw.rect(gameDisplay, (255, 255, 0), [dataArray[0][0], dataArray[0][1], 20, 20])
+	if pressed[pygame.K_w]:
+            jumpVelocity = 20
+        if (jumpVelocity > 0):
+            dataArray[0][1] -= 2
+            jumpVelocity -= 1
+        elif (dataArray[0][1] >= 500):
+            dataArray[0][1] = 500
+        else:
+            dataArray[0][1] += 2
+	time.sleep(.01)
+	pygame.display.update()
+
+        
 
 pink = (255, 100, 100)
 white = (255,255,255)
@@ -46,13 +71,10 @@ while not gameExit:
 		if bullet_time <= 0:
 			bullet_bool = False
 			bullet_time = 80
-
 	if pressed[pygame.K_SPACE] and bullet_bool == False:
 		bullet_bool = True
 		bullet_pos[1] = position[1] - 20
 		bullet_pos[0] = position[0] + 13
-
-
 	if pressed[pygame.K_w]:
 		position[1] = position[1] - 10
         if position[1] <= 30:
@@ -69,20 +91,9 @@ while not gameExit:
 		position[0] = position[0] + 10
 	if position[0] >= 770:
 		position[0] = 770
-        
-        
-
-
         if col_detect(bullet_pos, enemy_pos):
             print("collision detected")
             enemy_pos[0] = enemy_pos[0] + 100
             enemy_pos[1] = enemy_pos[1] + 100
-
-
-
-
-
-
+            platformer(pygame, [position])
 	pygame.display.update()
-
-
