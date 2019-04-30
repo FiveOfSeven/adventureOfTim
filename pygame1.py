@@ -11,13 +11,14 @@ pygame.init()
 
 
 def threeD(pygame, dataArray):
-    print("hello threeD")
     threeDExit = False
     vanishPoint = [400, 300, 0]
-    spectator = [400, 150, 10]
+    spectator = [400, 250, 50]
     # 4 points of square
     dSquare = [[350, 500, -50], [450, 500, -50], [450, 600, -50], [350, 600, -50]]
     ppSquare = [[350, 500, -10], [450, 500, -10], [450, 600, -10], [350, 600, -10]]
+    moveRecover = 0
+    moveAmount = 10
     while not threeDExit:
 	for event in pygame.event.get():
 	    if event.type == pygame.QUIT:
@@ -41,73 +42,39 @@ def threeD(pygame, dataArray):
         # Ax + By + Cz = D
         # two-point form:
         # (x - x1)/(x2 - x1) = (y - y1)/(y2 - y1) = (z - z1)/(z2 - z1) = c 
-	if pressed[pygame.K_w]:
-	    dSquare[0][2] -= 10
-	    dSquare[1][2] -= 10
-	    dSquare[2][2] -= 10
-	    dSquare[3][2] -= 10
+        if pressed[pygame.K_w]:
+	    dSquare[0][2] -= moveAmount
+	    dSquare[1][2] -= moveAmount
+	    dSquare[2][2] -= moveAmount
+	    dSquare[3][2] -= moveAmount
 	if pressed[pygame.K_s] and dSquare[0][2] < 0:
-	    dSquare[0][2] += 10
-	    dSquare[1][2] += 10
-	    dSquare[2][2] += 10
-	    dSquare[3][2] += 10
+	    dSquare[0][2] += moveAmount
+	    dSquare[1][2] += moveAmount
+	    dSquare[2][2] += moveAmount
+	    dSquare[3][2] += moveAmount
 	if pressed[pygame.K_a]:
-	    dSquare[0][0] -= 10
-	    dSquare[1][0] -= 10
-	    dSquare[2][0] -= 10
-	    dSquare[3][0] -= 10
+	    dSquare[0][0] -= moveAmount
+	    dSquare[1][0] -= moveAmount
+	    dSquare[2][0] -= moveAmount
+	    dSquare[3][0] -= moveAmount
 	if pressed[pygame.K_d]:
-	    dSquare[0][0] += 10
-	    dSquare[1][0] += 10
-	    dSquare[2][0] += 10
-	    dSquare[3][0] += 10
+	    dSquare[0][0] += moveAmount
+	    dSquare[1][0] += moveAmount
+	    dSquare[2][0] += moveAmount
+	    dSquare[3][0] += moveAmount
+        if dSquare[0][2] <= -1000:
+            threeDExit = True
         for index, point in enumerate(dSquare):
-            print("index: ", index)
             # sub nothing = point; sub1 is where z = 0; sub2 is spectator
-            c = (point[2] - 0) / (spectator[2] - 0)
+            c = (float(point[2]) - 0) / (float(spectator[2]) - 0)
             # x - x1 = c * x2 - (c * x1)
             # -x1 = cx2 - cx1 - x
             # -x1 + cx1 = cx2 -x
             # x1(-1 + c) = cx2 -x
             # x1 = (cx2 - x) / (c - 1)
-            x1 = (c * spectator[0] - point[0]) / (c - 1)
-            y1 = (c * spectator[1] - point[1]) / (c - 1)
-            print("point[2]: ", point[2])
-            print("spectator[2]: ", spectator[2])
-            print("c: ", c)
-            print("x1: ", x1)
-            print("y1: ", y1)
+            x1 = (c * float(spectator[0]) - float(point[0])) / (c - 1)
+            y1 = (c * float(spectator[1]) - float(point[1])) / (c - 1)
             ppSquare[index] = [x1, y1, 0]
-            print("ppSquare[index]: ", ppSquare[index])
-            print("point[0]: ", point[0])
-            print("point[1]: ", point[1])
-
-
-
-
-
-
-            #l = spectator[0] - point[0]
-            #m = spectator[1] - point[1]
-            #n = spectator[2] - 0
-            ##l =  point[0] - spectator[0]
-            ##m =  point[1] - spectator[1]
-            ##n =  point[2] - spectator[2]
-            #c = ((point[2] - spectator[2]) / n)
-            #x = (c * l) + spectator[0]
-            #y = (c * m) + spectator[1]
-            #ppSquare[index] = [x, y, 0]
-            #print ("c: ", c)
-            #print ("l: ", l)
-            #print ("m: ", m)
-            #print ("n: ", n)
-            #print ("point[2]: ", point[2])
-            #print ("dz: ", dSquare[0][2])
-            #print ("dx: ", dSquare[0][0])
-            #print ("ppx: ", x)
-            #print ("ppy: ", y)
-
-
 
         #pygame.draw.polygon(gameDisplay, [50, 0, 150], ((350, 700), (100, 50), (100, 100), (50, 100)))
         pygame.draw.polygon(gameDisplay, [50, 0, 150], ((ppSquare[0][0], ppSquare[0][1]), (ppSquare[1][0], \
@@ -118,7 +85,6 @@ def threeD(pygame, dataArray):
 
 def platformer(pygame, dataArray):
     print("hello platformer")
-    threeD(pygame, dataArray)
     platformerExit = False
     jumpVelocity = 0
     jumpRecover = 0
@@ -167,6 +133,7 @@ def platformer(pygame, dataArray):
                     jumpRecover = 60
         elif (dataArray[0][1] >= 600):
             platformerExit = True
+            threeD(pygame, dataArray)
         else:
             dataArray[0][1] += 10
 	time.sleep(.01)
@@ -232,7 +199,7 @@ while not gameExit:
 		position[0] = 770
         if col_detect(bullet_pos, enemy_pos):
             print("collision detected")
-            enemy_pos[0] = enemy_pos[0] + 100
-            enemy_pos[1] = enemy_pos[1] + 100
+            #enemy_pos[0] = enemy_pos[0] + 100
+            #enemy_pos[1] = enemy_pos[1] + 100
             platformer(pygame, [position])
 	pygame.display.update()
