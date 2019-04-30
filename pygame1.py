@@ -201,5 +201,6 @@ while not gameExit:
             print("collision detected")
             #enemy_pos[0] = enemy_pos[0] + 100
             #enemy_pos[1] = enemy_pos[1] + 100
+	    bullet_pos[1] = -2000
             platformer(pygame, [position])
 	pygame.display.update()
