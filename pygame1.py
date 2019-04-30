@@ -9,6 +9,20 @@ from defsPygame1 import col_detect, platform_detect
 
 pygame.init()
 
+def perspectify(dSquare, spectator):
+    for index, point in enumerate(dSquare):
+        # sub nothing = point; sub1 is where z = 0; sub2 is spectator
+        c = (float(point[2]) - 0) / (float(spectator[2]) - 0)
+        # x - x1 = c * x2 - (c * x1)
+        # -x1 = cx2 - cx1 - x
+        # -x1 + cx1 = cx2 -x
+        # x1(-1 + c) = cx2 -x
+        # x1 = (cx2 - x) / (c - 1)
+        x1 = (c * float(spectator[0]) - float(point[0])) / (c - 1)
+        y1 = (c * float(spectator[1]) - float(point[1])) / (c - 1)
+        dSquare[index] = [x1, y1, 0]
+    return dSquare
+
 
 def threeD(pygame, dataArray):
     threeDExit = False
@@ -30,24 +44,21 @@ def threeD(pygame, dataArray):
         # 3d line math: https://brilliant.org/wiki/3d-coordinate-geometry-equation-of-a-line/
         # Get the picture plane square (ppSquare) of a square in the distance (dSquare)
         # x, y, z; positive: x, right; y, down; z, backwards away from screen;
-        # ((x - x1) / l) = ((y -y1) / m) = ((z - z1) / n) = c
-        # l = x1 - x
-        # m = y1 - y
-        # n = z1 - z
-        # c = ((z -z1) / n)
-        # x = cl + x1
-        # y = cm + y1
         # x is the x value of dSquare, and x1 is the x value of spectator
-
         # Ax + By + Cz = D
         # two-point form:
+
         # (x - x1)/(x2 - x1) = (y - y1)/(y2 - y1) = (z - z1)/(z2 - z1) = c 
+        #if pressed[pygame.K_q]:
+        #    spectator[0] -= 10
+        #if pressed[pygame.K_e]:
+        #    spectator[0] += 10
         if pressed[pygame.K_w]:
 	    dSquare[0][2] -= moveAmount
 	    dSquare[1][2] -= moveAmount
 	    dSquare[2][2] -= moveAmount
 	    dSquare[3][2] -= moveAmount
-	if pressed[pygame.K_s] and dSquare[0][2] < 0:
+	if pressed[pygame.K_s] and ppSquare[0][2] < 0:
 	    dSquare[0][2] += moveAmount
 	    dSquare[1][2] += moveAmount
 	    dSquare[2][2] += moveAmount
@@ -64,17 +75,7 @@ def threeD(pygame, dataArray):
 	    dSquare[3][0] += moveAmount
         if dSquare[0][2] <= -1000:
             threeDExit = True
-        for index, point in enumerate(dSquare):
-            # sub nothing = point; sub1 is where z = 0; sub2 is spectator
-            c = (float(point[2]) - 0) / (float(spectator[2]) - 0)
-            # x - x1 = c * x2 - (c * x1)
-            # -x1 = cx2 - cx1 - x
-            # -x1 + cx1 = cx2 -x
-            # x1(-1 + c) = cx2 -x
-            # x1 = (cx2 - x) / (c - 1)
-            x1 = (c * float(spectator[0]) - float(point[0])) / (c - 1)
-            y1 = (c * float(spectator[1]) - float(point[1])) / (c - 1)
-            ppSquare[index] = [x1, y1, 0]
+        ppSquare = perspectify(dSquare, spectator)
 
         #pygame.draw.polygon(gameDisplay, [50, 0, 150], ((350, 700), (100, 50), (100, 100), (50, 100)))
         pygame.draw.polygon(gameDisplay, [50, 0, 150], ((ppSquare[0][0], ppSquare[0][1]), (ppSquare[1][0], \
