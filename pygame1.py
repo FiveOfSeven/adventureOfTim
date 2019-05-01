@@ -71,7 +71,7 @@ def threeD(pygame, dataArray):
             spectator[0] += 10
         if abs(ppSquare[0][0]) > 10000:
             threeDExit = True
-        if pressed[pygame.K_w] and (spectator[1] + 0.3) <= ppSquare[0][1]:
+        if pressed[pygame.K_w] and ((spectator[1] + 0.3) <= ppSquare[0][1] or (spectator[1] - 0.3) >= ppSquare[0][1]):
             dSquare = moveSquare(copy.deepcopy(dSquare), 2, -moveAmount)
 	if pressed[pygame.K_s]:
             dSquare = moveSquare(copy.deepcopy(dSquare), 2, moveAmount)
