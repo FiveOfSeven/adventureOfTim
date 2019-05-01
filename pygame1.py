@@ -17,9 +17,10 @@ def moveSquare(square, idx, amount):
     return square
          
 
-def perspectify(inSquare, spectator):
-    displayString =  "pygame.draw.polygon(gameDisplay, [50, 0, 150], ("
+def perspectify(inSquare, spectator, color):
+    displayString =  "pygame.draw.polygon(gameDisplay, " + str(color) + ", ("
     displayBool = False
+    print inSquare
     for index, point in enumerate(inSquare):
         # sub nothing = point; sub1 is where z = 0; sub2 is spectator
         c = (float(point[2]) - 0) / (float(spectator[2]) - 0)
@@ -46,6 +47,8 @@ def threeD(pygame, dataArray):
     # 4 points of square
     dSquare = [[350, 500, -50], [450, 500, -50], [450, 600, -50], [350, 600, -50]]
     ppSquare = [[350, 500, -10], [450, 500, -10], [450, 600, -10], [350, 600, -10]]
+    leftRail = [[0, 400, 0], [0, 400, -3000], [0, 600, -3000], [0, 600, 0]]
+    rightRail = [[800, 400, 0], [800, 400, -3000], [800, 600, -3000], [800, 600, 0]]
     moveRecover = 0
     moveAmount = 10
     while not threeDExit:
@@ -84,7 +87,9 @@ def threeD(pygame, dataArray):
             dSquare[0][1] += 10
         if dSquare[0][2] <= -1000:
             threeDExit = True
-        ppSquare = perspectify(copy.deepcopy(dSquare), spectator)
+        perspectify(copy.deepcopy(leftRail), spectator, [255, 0, 0])
+        perspectify(copy.deepcopy(rightRail), spectator, [255, 0, 0])
+        ppSquare = perspectify(copy.deepcopy(dSquare), spectator, [50, 0, 150])
 
         #pygame.draw.polygon(gameDisplay, [50, 0, 150], ((350, 700), (100, 50), (100, 100), (50, 100)))
         #pygame.draw.polygon(gameDisplay, [50, 0, 150], ((ppSquare[0][0], ppSquare[0][1]), (ppSquare[1][0], \
