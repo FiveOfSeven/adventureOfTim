@@ -18,6 +18,7 @@ def moveSquare(square, idx, amount):
          
 
 def perspectify(inSquare, spectator):
+    displayString =  "pygame.draw.polygon(gameDisplay, [50, 0, 150], ("
     for index, point in enumerate(inSquare):
         # sub nothing = point; sub1 is where z = 0; sub2 is spectator
         c = (float(point[2]) - 0) / (float(spectator[2]) - 0)
@@ -27,16 +28,13 @@ def perspectify(inSquare, spectator):
         # x1(-1 + c) = cx2 -x
         # x1 = (cx2 - x) / (c - 1)
         if (c != 1):
-            print ("c: ", c)
-            print ("float(spectator[0]): ", float(spectator[0]))
-            print ("float(point[0])): ", float(point[0]))
             x1 = (c * float(spectator[0]) - float(point[0])) / (c - 1)
             y1 = (c * float(spectator[1]) - float(point[1])) / (c - 1)
-            print ("x1: ", x1)
-            print ("y1: ", y1)
             inSquare[index] = [x1, y1, 0]
-    return inSquare
-    
+        displayString += "(" + x1 + ", " + y1 + "), "
+    displayString += "))"
+    exec(displayString)
+    return inSquare 
 
 def threeD(pygame, dataArray):
     threeDExit = False
@@ -84,12 +82,10 @@ def threeD(pygame, dataArray):
         if dSquare[0][2] <= -1000:
             threeDExit = True
         ppSquare = perspectify(copy.deepcopy(dSquare), spectator)
-        print ('dSquare: ', dSquare)
-        print ('ppSquare: ', ppSquare)
 
         #pygame.draw.polygon(gameDisplay, [50, 0, 150], ((350, 700), (100, 50), (100, 100), (50, 100)))
-        pygame.draw.polygon(gameDisplay, [50, 0, 150], ((ppSquare[0][0], ppSquare[0][1]), (ppSquare[1][0], \
-                ppSquare[1][1]), (ppSquare[2][0], ppSquare[2][1]), (ppSquare[3][0], ppSquare[3][1])))
+        #pygame.draw.polygon(gameDisplay, [50, 0, 150], ((ppSquare[0][0], ppSquare[0][1]), (ppSquare[1][0], \
+        #ppSquare[1][1]), (ppSquare[2][0], ppSquare[2][1]), (ppSquare[3][0], ppSquare[3][1])))
 	time.sleep(.01)
 	pygame.display.update()
 
@@ -136,36 +132,12 @@ def platformer(pygame, dataArray):
             jumpVelocity -= 1
         #elif (dataArray[0][1] >= 500):
         elif (platform_detect(dataArray[0], platforms_pos)[0]):
-            dataArray[0][1] = platform_detect(dataArray[0], platforms_pos)[1] - dataArray[0][3]
-	    if pressed[pygame.K_w]:
-                if jumpVelocity <= 0 and jumpRecover <= 0:
-                    jumpVelocity = 20
-                    jumpRecover = 60
-        elif (dataArray[0][1] >= 600):
-            platformerExit = True
-            threeD(pygame, dataArray)
-        else:
-            dataArray[0][1] += 10
-	time.sleep(.01)
-	pygame.display.update()
+            dataArrayDisplay = pygame.display.set_mode((800,600))
 
-        
 
-pink = (255, 100, 100)
-white = (255,255,255)
-black = (0,0,0)
-red = (255,0,0)
-green = (0, 255, 0)
-position = [400, 300, 20, 20]
-userInput = "no input"
-bullet_pos = [position[0] + 10, position[1] - 2000, 5, 10]
-bullet_bool = False
-bullet_time = 80
-enemy_pos = [400, 100, 30, 30]
-gameDisplay = pygame.display.set_mode((800,600))
+
+# Start of the main game
 pygame.display.set_caption('game_of_the_bloxx')
-
-#delete this comment
 gameExit = False
 
 while not gameExit:
