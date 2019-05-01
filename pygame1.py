@@ -10,19 +10,20 @@ from defsPygame1 import col_detect, platform_detect
 
 pygame.init()
 
-def moveSquare(square, idx, amount):
-    square = square
-    for forIdx, point in enumerate(square):
-        square[forIdx][idx] += amount
-    return square
+def moveSquare(squares, idx, amount):
+    mySquares = copy.deepcopy(squares)
+    for square in squares:
+        for forIdx, point in enumerate(square):
+            square[forIdx][idx] += amount
          
 
 def perspectify(inSquare, spectator, color):
     displayString =  "pygame.draw.polygon(gameDisplay, " + str(color) + ", ("
     displayBool = False
-    print inSquare
+    pointArguments = 0;
     for index, point in enumerate(inSquare):
         # sub nothing = point; sub1 is where z = 0; sub2 is spectator
+        # (x - x1)/(x2 - x1) = (y - y1)/(y2 - y1) = (z - z1)/(z2 - z1) = c 
         c = (float(point[2]) - 0) / (float(spectator[2]) - 0)
         # x - x1 = c * x2 - (c * x1)
         # -x1 = cx2 - cx1 - x
@@ -30,29 +31,36 @@ def perspectify(inSquare, spectator, color):
         # x1(-1 + c) = cx2 -x
         # x1 = (cx2 - x) / (c - 1)
         if (c != 1):
+            pointArguments += 1
             displayBool = True
             x1 = (c * float(spectator[0]) - float(point[0])) / (c - 1)
             y1 = (c * float(spectator[1]) - float(point[1])) / (c - 1)
             inSquare[index] = [x1, y1, 0]
             displayString += "(" + str(x1) + ", " + str(y1) + "), "
     displayString += "))"
-    if displayBool:
+    if displayBool and pointArguments > 2:
+        print "displayString: ", displayString
         exec(displayString)
     return inSquare 
 
 def threeD(pygame, dataArray):
     threeDExit = False
-    vanishPoint = [400, 300, 0]
     spectator = [400, 250, 50]
     # 4 points of square
-    dSquare = [[350, 500, -50], [450, 500, -50], [450, 600, -50], [350, 600, -50]]
+    dSquare1 = [[350, 500, -50], [450, 500, -50], [450, 600, -50], [350, 600, -50]]
+    dSquare2 = [[350, 500, -100], [450, 500, -100], [450, 600, -100], [350, 600, -100]]
+    dSquare3 = [[450, 500, -50], [450, 500, -100], [450, 600, -100], [450, 600, -50]]
+    dSquare4 = [[350, 500, -50], [350, 500, -100], [350, 600, -100], [350, 600, -50]]
+    dSquare5 = [[350, 500, -50], [350, 500, -100], [450, 500, -100], [450, 500, -50]]
+    dSquare6 = [[350, 600, -50], [350, 600, -100], [450, 600, -100], [450, 600, -50]]
+    dSquare = [dSquare1, dSquare2, dSquare3, dSquare4, dSquare5, dSquare6]
     ppSquare = [[350, 500, -10], [450, 500, -10], [450, 600, -10], [350, 600, -10]]
     leftRail = [[0, 400, 0], [0, 400, -3000], [0, 600, -3000], [0, 600, 0]]
     rightRail = [[800, 400, 0], [800, 400, -3000], [800, 600, -3000], [800, 600, 0]]
     moveRecover = 0
     moveAmount = 10
+    circleT = 0
     while not threeDExit:
-        print("first dSquare: ", dSquare)
 	for event in pygame.event.get():
 	    if event.type == pygame.QUIT:
                 threeDExit = True
@@ -71,25 +79,48 @@ def threeD(pygame, dataArray):
         # (x - x1)/(x2 - x1) = (y - y1)/(y2 - y1) = (z - z1)/(z2 - z1) = c 
         if pressed[pygame.K_q]:
             spectator[0] -= 10
+        if pressed[pygame.K_t]:
+            # Equation of the Circle
+            # a and b is the origin of the spectator (circle)
+            # (x - a)^2 + (y - b)^2 = r^2
+            # parametric form
+            # x = a + r((1 - t^2) / (1 + t^2))
+            # y = b + r(2t / (1 + t^2))
+            circleT += 0.1
+            spectator[0] = 400 + 1000 * (1 - (circleT * circleT) / (1 + (circleT * circleT)))
+            spectator[1] = 250 + 1000 * ((2 * circleT) / (1 + (circleT * circleT)))
         if pressed[pygame.K_e]:
             spectator[0] += 10
-        if abs(ppSquare[0][0]) > 10000:
-            threeDExit = True
+        if pressed[pygame.K_r]:
+            circleT -= 0.1
+            spectator[0] = 400 + 1000 * (1 - (circleT * circleT) / (1 + (circleT * circleT)))
+            spectator[1] = 250 + 1000 * ((2 * circleT) / (1 + (circleT * circleT)))
+        if abs(ppSquare[0][0]) > 10000: 
+            threeDExit = True 
         if pressed[pygame.K_w] and ((spectator[1] + 0.3) <= ppSquare[0][1] or (spectator[1] - 0.3) >= ppSquare[0][1]):
-            dSquare = moveSquare(copy.deepcopy(dSquare), 2, -moveAmount)
+            moveSquare(dSquare, 2, -moveAmount)
 	if pressed[pygame.K_s]:
-            dSquare = moveSquare(copy.deepcopy(dSquare), 2, moveAmount)
-	if pressed[pygame.K_a] and (copy.deepcopy(dSquare)[0][0] >= 50):
-            dSquare = moveSquare(copy.deepcopy(dSquare), 0, -moveAmount)
-	if pressed[pygame.K_d] and (dSquare[0][0] <= 700):
-            dSquare = moveSquare(copy.deepcopy(dSquare), 0, moveAmount)
+            moveSquare(dSquare, 2, moveAmount)
+	if pressed[pygame.K_a] and (dSquare1[0][0] >= 50):
+            moveSquare(dSquare, 0, -moveAmount)
+	if pressed[pygame.K_d] and (dSquare1[0][0] <= 700):
+            moveSquare(dSquare, 0, moveAmount)
+	if pressed[pygame.K_k] and (dSquare1[0][1] >= 0):
+            moveSquare(dSquare, 1, -moveAmount)
+	if pressed[pygame.K_j] and (dSquare1[0][1] <= 700):
+            moveSquare(dSquare, 1, moveAmount)
         if pressed[pygame.K_z]:
-            dSquare[0][1] += 10
-        if dSquare[0][2] <= -1000:
+            dSquare1[0][1] += 10
+        if dSquare1[0][2] <= -1000:
             threeDExit = True
         perspectify(copy.deepcopy(leftRail), spectator, [255, 0, 0])
         perspectify(copy.deepcopy(rightRail), spectator, [255, 0, 0])
-        ppSquare = perspectify(copy.deepcopy(dSquare), spectator, [50, 0, 150])
+        perspectify(copy.deepcopy(dSquare6), spectator, [125, 225, 25])
+        perspectify(copy.deepcopy(dSquare2), spectator, [150, 200, 50])
+        perspectify(copy.deepcopy(dSquare3), spectator, [50, 100, 255])
+        perspectify(copy.deepcopy(dSquare4), spectator, [100, 20, 255])
+        perspectify(copy.deepcopy(dSquare5), spectator, [50, 200, 100])
+        perspectify(copy.deepcopy(dSquare1), spectator, [50, 0, 150])
 
         #pygame.draw.polygon(gameDisplay, [50, 0, 150], ((350, 700), (100, 50), (100, 100), (50, 100)))
         #pygame.draw.polygon(gameDisplay, [50, 0, 150], ((ppSquare[0][0], ppSquare[0][1]), (ppSquare[1][0], \
