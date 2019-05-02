@@ -17,7 +17,7 @@ def moveSquare(squares, idx, amount):
             square[forIdx][idx] += amount
          
 
-def perspectify(inSquare, spectator, color):
+def perspectify(inSquare, spectator, color, squareSide):
     displayString =  "pygame.draw.polygon(gameDisplay, " + str(color) + ", ("
     displayBool = False
     pointArguments = 0;
@@ -35,12 +35,26 @@ def perspectify(inSquare, spectator, color):
             displayBool = True
             x1 = (c * float(spectator[0]) - float(point[0])) / (c - 1)
             y1 = (c * float(spectator[1]) - float(point[1])) / (c - 1)
-            inSquare[index] = [x1, y1, 0]
+            inSquare[index] = [x1, y1, inSquare[index][2]]
             displayString += "(" + str(x1) + ", " + str(y1) + "), "
     displayString += "))"
     if displayBool and pointArguments > 2:
-        print "displayString: ", displayString
-        exec(displayString)
+        
+        if (squareSide == "always"):
+            #print "displayString: ", displayString
+            exec(displayString)
+        elif (squareSide == "right" and inSquare[0][0] < inSquare[1][0]):
+            exec(displayString)
+        elif (squareSide == "left" and inSquare[0][0] > inSquare[1][0]):
+            exec(displayString)
+        elif (squareSide == "top" and inSquare[0][1] > inSquare[1][1]):
+            exec(displayString)
+        elif (squareSide == "close" and inSquare[0][2] < spectator[2]):
+            exec(displayString)
+        elif (squareSide == "bottom" and inSquare[0][1] < inSquare[1][1]):
+            exec(displayString)
+        elif (squareSide == "far" and inSquare[0][2] > spectator[2]):
+            exec(displayString)
     return inSquare 
 
 def threeD(pygame, dataArray):
@@ -113,14 +127,14 @@ def threeD(pygame, dataArray):
             dSquare1[0][1] += 10
         if dSquare1[0][2] <= -1000:
             threeDExit = True
-        perspectify(copy.deepcopy(leftRail), spectator, [255, 0, 0])
-        perspectify(copy.deepcopy(rightRail), spectator, [255, 0, 0])
-        perspectify(copy.deepcopy(dSquare6), spectator, [125, 225, 25])
-        perspectify(copy.deepcopy(dSquare2), spectator, [150, 200, 50])
-        perspectify(copy.deepcopy(dSquare3), spectator, [50, 100, 255])
-        perspectify(copy.deepcopy(dSquare4), spectator, [100, 20, 255])
-        perspectify(copy.deepcopy(dSquare5), spectator, [50, 200, 100])
-        perspectify(copy.deepcopy(dSquare1), spectator, [50, 0, 150])
+        perspectify(copy.deepcopy(leftRail), spectator, [255, 0, 0], "always")
+        perspectify(copy.deepcopy(rightRail), spectator, [255, 0, 0], "always")
+        perspectify(copy.deepcopy(dSquare6), spectator, [165, 119, 25], "bottom") #orange
+        perspectify(copy.deepcopy(dSquare2), spectator, [150, 200, 50], "far") #puke green
+        perspectify(copy.deepcopy(dSquare3), spectator, [50, 100, 255], "right") #blue
+        perspectify(copy.deepcopy(dSquare4), spectator, [100, 20, 255], "left") #purple
+        perspectify(copy.deepcopy(dSquare5), spectator, [50, 200, 100], "top") #light green
+        perspectify(copy.deepcopy(dSquare1), spectator, [50, 0, 150], "close") #dark blue
 
         #pygame.draw.polygon(gameDisplay, [50, 0, 150], ((350, 700), (100, 50), (100, 100), (50, 100)))
         #pygame.draw.polygon(gameDisplay, [50, 0, 150], ((ppSquare[0][0], ppSquare[0][1]), (ppSquare[1][0], \
