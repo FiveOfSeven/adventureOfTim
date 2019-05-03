@@ -1,6 +1,7 @@
 import pygame 
 import time
 import copy
+import math
 
 # import Enemy
 import sys
@@ -13,7 +14,6 @@ pygame.init()
 def moveSquare(squares, idx, amount):
     mySquares = copy.deepcopy(squares)
     for square in squares:
-        print "square: ", square
         for forIdx, point in enumerate(square):
             square[forIdx][idx] += amount
 
@@ -90,6 +90,7 @@ def threeD(pygame, dataArray):
     #square x, y, z, width, hight, depth; cube origin is at top left forward point
     playerCube = [325, 400, -75, 100, 100, 50]
     enemy1Cube = [325, 400, -300, 100, 100, 50]
+    allCubes = [playerCube, enemy1Cube]
     # 4 points of square
     dSquare1 = [[350, 500, -50], [450, 500, -50], [450, 600, -50], [350, 600, -50]]
     dSquare2 = [[350, 500, -100], [450, 500, -100], [450, 600, -100], [350, 600, -100]]
@@ -171,8 +172,49 @@ def threeD(pygame, dataArray):
         #perspectify(copy.deepcopy(dSquare4), spectator, [100, 20, 255], "left") #purple
         #perspectify(copy.deepcopy(dSquare5), spectator, [50, 200, 100], "top") #light green
         #perspectify(copy.deepcopy(dSquare1), spectator, [50, 0, 150], "close") #dark blue
-        cubeToPerspective(enemy1Cube, spectator)
-        cubeToPerspective(playerCube, spectator)
+
+        # 3d line distance pythagorean therom
+        cubeDistances = []
+        for index, cube in enumerate(allCubes):
+            # d = sqrt((x2-x1)^2 + (y2-y1)^2 + (z2-z1)^2); spectator = 1; CubePoint = 2
+            distance = math.sqrt((cube[0] - spectator[0]) ** 2 + (cube[1] - spectator[1]) ** 2 + (cube[2] - spectator[2]) ** 2)
+            cubeDistances.append(distance)
+        # sort distances
+        print("sorting")
+        for index1, distance1 in enumerate(cubeDistances):
+            smallestDistance = distance1
+            forIndex = 0
+            for index2, distance2 in enumerate(cubeDistances[index1:]):
+                print ("distance2: ", distance2)
+                print ("smallestDistance: ", smallestDistance)
+                if distance2 < smallestDistance:
+                    smallestDistance = distance2
+                    print ("index1: ", index1)
+                    print ("index2: ", index2)
+                    forIndex = index2
+            print (cubeDistances)
+            print("for index: ", forIndex)
+            print("index1: ", index1)
+            print("cube for index: ", cubeDistances[forIndex])
+            print("cube index1: ", cubeDistances[index1])
+            print("allCubes1: ", allCubes)
+            if (cubeDistances[forIndex] > cubeDistances[index1]):
+                cubeDistances[forIndex] = cubeDistances[index1]
+                cubeDistances[index1] = smallestDistance
+                temp = copy.deepcopy(allCubes[forIndex])
+                #allCubes[forIndex] = copy.deepcopy(allCubes[index1])
+                allCubes[index1] = copy.deepcopy(temp)
+                print ("cube2: ", cubeDistances)
+            print("allCubes2: ", allCubes)
+        for cube in allCubes:
+            cubeToPerspective(cube, spectator)
+            
+                    
+                
+            
+        
+        #cubeToPerspective(enemy1Cube, spectator)
+        #cubeToPerspective(playerCube, spectator)
 
         #pygame.draw.polygon(gameDisplay, [50, 0, 150], ((350, 700), (100, 50), (100, 100), (50, 100)))
         #pygame.draw.polygon(gameDisplay, [50, 0, 150], ((ppSquare[0][0], ppSquare[0][1]), (ppSquare[1][0], \
