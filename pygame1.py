@@ -198,12 +198,20 @@ def threeD(pygame, dataArray):
             print("cube for index: ", cubeDistances[forIndex])
             print("cube index1: ", cubeDistances[index1])
             print("allCubes1: ", allCubes)
-            if (cubeDistances[forIndex] > cubeDistances[index1]):
+            if (cubeDistances[forIndex] >= cubeDistances[index1]):
                 cubeDistances[forIndex] = cubeDistances[index1]
                 cubeDistances[index1] = smallestDistance
                 temp = copy.deepcopy(allCubes[forIndex])
-                #allCubes[forIndex] = copy.deepcopy(allCubes[index1])
-                allCubes[index1] = copy.deepcopy(temp)
+                print("temp: ", temp)
+                print("allCubes1.1: ", allCubes)
+                print("allCubes[forIndex]: ", allCubes[forIndex])
+                print("copy.deepcopy(allCubes[index1]): ", copy.deepcopy(allCubes[index1]))
+                allCubes[forIndex][0] = copy.deepcopy(allCubes[index1][0])
+                allCubes[forIndex][1] = copy.deepcopy(allCubes[index1][1])
+                allCubes[forIndex][2] = copy.deepcopy(allCubes[index1][2])
+                allCubes[index1][0] = temp[0]
+                allCubes[index1][1] = temp[1]
+                allCubes[index1][2] = temp[2]
                 print ("cube2: ", cubeDistances)
             print("allCubes2: ", allCubes)
         for cube in allCubes:
