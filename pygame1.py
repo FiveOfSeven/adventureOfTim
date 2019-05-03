@@ -13,9 +13,9 @@ pygame.init()
 def moveSquare(squares, idx, amount):
     mySquares = copy.deepcopy(squares)
     for square in squares:
+        print "square: ", square
         for forIdx, point in enumerate(square):
             square[forIdx][idx] += amount
-         
 
 def perspectify(inSquare, spectator, color, squareSide):
     displayString =  "pygame.draw.polygon(gameDisplay, " + str(color) + ", ("
@@ -53,13 +53,43 @@ def perspectify(inSquare, spectator, color, squareSide):
             exec(displayString)
         elif (squareSide == "bottom" and inSquare[0][1] < inSquare[1][1]):
             exec(displayString)
-        elif (squareSide == "far" and inSquare[0][2] > spectator[2]):
+        elif (squareSide == "far" and inSquare[0][2] > spectator[2]): 
             exec(displayString)
     return inSquare 
+
+#square x, y, z, width, hight, depth; cube origin is at top left forward point
+def cubeToPerspective(playerCube, spectator):
+    perspectify([[playerCube[0], playerCube[1] + playerCube[4], playerCube[2] + playerCube[5]], \
+            [playerCube[0], playerCube[1] + playerCube[4], playerCube[2]], \
+            [playerCube[0] + playerCube[3], playerCube[1] + playerCube[4], playerCube[2]], \
+            [playerCube[0] + playerCube[3], playerCube[1] + playerCube[4], playerCube[2] + playerCube[5]]], spectator, [165, 119, 25], "bottom") #orange
+    perspectify([[playerCube[0], playerCube[1], playerCube[2]], \
+            [playerCube[0] + playerCube[3], playerCube[1], playerCube[2]], \
+            [playerCube[0] + playerCube[3], playerCube[1] + playerCube[4], playerCube[2]], \
+            [playerCube[0], playerCube[1] + playerCube[4], playerCube[2]]], spectator, [150, 200, 50], "far") #puke green
+    perspectify([[playerCube[0] + playerCube[3], playerCube[1], playerCube[2] + playerCube[5]], \
+            [playerCube[0] + playerCube[3], playerCube[1], playerCube[2]], \
+            [playerCube[0] + playerCube[3], playerCube[1] + playerCube[4], playerCube[2]], \
+            [playerCube[0] + playerCube[3], playerCube[1] + playerCube[4], playerCube[2] + playerCube[5]]], spectator, [50, 100, 255], "right") #blue
+    perspectify([[playerCube[0], playerCube[1], playerCube[2] + playerCube[5]], \
+            [playerCube[0], playerCube[1], playerCube[2]], \
+            [playerCube[0], playerCube[1] + playerCube[4], playerCube[2]], \
+            [playerCube[0], playerCube[1] + playerCube[4], playerCube[2] + playerCube[5]]], spectator, [100, 20, 255], "left") #purple
+    perspectify([[playerCube[0], playerCube[1], playerCube[2] + playerCube[5]], \
+            [playerCube[0], playerCube[1], playerCube[2]], \
+            [playerCube[0] + playerCube[3], playerCube[1], playerCube[2]], \
+            [playerCube[0] + playerCube[3], playerCube[1], playerCube[2] + playerCube[5]]], spectator, [50, 200, 100], "top") #light green
+    perspectify([[playerCube[0], playerCube[1], playerCube[2] + playerCube[5]], \
+            [playerCube[0] + playerCube[3], playerCube[1], playerCube[2] + playerCube[5]], \
+            [playerCube[0] + playerCube[3], playerCube[1] + playerCube[4], playerCube[2] + playerCube[5]], \
+            [playerCube[0], playerCube[1] + playerCube[4], playerCube[2] + playerCube[5]]], spectator, [50, 0, 150], "close") #dark blue
 
 def threeD(pygame, dataArray):
     threeDExit = False
     spectator = [400, 250, 50]
+    #square x, y, z, width, hight, depth; cube origin is at top left forward point
+    playerCube = [325, 400, -75, 100, 100, 50]
+    enemy1Cube = [325, 400, -300, 100, 100, 50]
     # 4 points of square
     dSquare1 = [[350, 500, -50], [450, 500, -50], [450, 600, -50], [350, 600, -50]]
     dSquare2 = [[350, 500, -100], [450, 500, -100], [450, 600, -100], [350, 600, -100]]
@@ -113,28 +143,36 @@ def threeD(pygame, dataArray):
             threeDExit = True 
         if pressed[pygame.K_w] and ((spectator[1] + 0.3) <= ppSquare[0][1] or (spectator[1] - 0.3) >= ppSquare[0][1]):
             moveSquare(dSquare, 2, -moveAmount)
+            playerCube[2] -= moveAmount
 	if pressed[pygame.K_s]:
             moveSquare(dSquare, 2, moveAmount)
+            playerCube[2] += moveAmount
 	if pressed[pygame.K_a] and (dSquare1[0][0] >= 50):
             moveSquare(dSquare, 0, -moveAmount)
+            playerCube[0] -= moveAmount
 	if pressed[pygame.K_d] and (dSquare1[0][0] <= 700):
             moveSquare(dSquare, 0, moveAmount)
+            playerCube[0] += moveAmount
 	if pressed[pygame.K_k] and (dSquare1[0][1] >= 0):
             moveSquare(dSquare, 1, -moveAmount)
+            playerCube[1] -= moveAmount
 	if pressed[pygame.K_j] and (dSquare1[0][1] <= 700):
             moveSquare(dSquare, 1, moveAmount)
+            playerCube[1] += moveAmount
         if pressed[pygame.K_z]:
             dSquare1[0][1] += 10
         if dSquare1[0][2] <= -1000:
             threeDExit = True
         perspectify(copy.deepcopy(leftRail), spectator, [255, 0, 0], "always")
         perspectify(copy.deepcopy(rightRail), spectator, [255, 0, 0], "always")
-        perspectify(copy.deepcopy(dSquare6), spectator, [165, 119, 25], "bottom") #orange
-        perspectify(copy.deepcopy(dSquare2), spectator, [150, 200, 50], "far") #puke green
-        perspectify(copy.deepcopy(dSquare3), spectator, [50, 100, 255], "right") #blue
-        perspectify(copy.deepcopy(dSquare4), spectator, [100, 20, 255], "left") #purple
-        perspectify(copy.deepcopy(dSquare5), spectator, [50, 200, 100], "top") #light green
-        perspectify(copy.deepcopy(dSquare1), spectator, [50, 0, 150], "close") #dark blue
+        #perspectify(copy.deepcopy(dSquare6), spectator, [165, 119, 25], "bottom") #orange
+        #perspectify(copy.deepcopy(dSquare2), spectator, [150, 200, 50], "far") #puke green
+        #perspectify(copy.deepcopy(dSquare3), spectator, [50, 100, 255], "right") #blue
+        #perspectify(copy.deepcopy(dSquare4), spectator, [100, 20, 255], "left") #purple
+        #perspectify(copy.deepcopy(dSquare5), spectator, [50, 200, 100], "top") #light green
+        #perspectify(copy.deepcopy(dSquare1), spectator, [50, 0, 150], "close") #dark blue
+        cubeToPerspective(enemy1Cube, spectator)
+        cubeToPerspective(playerCube, spectator)
 
         #pygame.draw.polygon(gameDisplay, [50, 0, 150], ((350, 700), (100, 50), (100, 100), (50, 100)))
         #pygame.draw.polygon(gameDisplay, [50, 0, 150], ((ppSquare[0][0], ppSquare[0][1]), (ppSquare[1][0], \
