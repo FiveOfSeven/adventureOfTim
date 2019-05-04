@@ -2,6 +2,7 @@ import pygame
 import time
 import copy
 import math
+import pdb
 
 # import Enemy
 import sys
@@ -180,42 +181,23 @@ def threeD(pygame, dataArray):
             distance = math.sqrt((cube[0] - spectator[0]) ** 2 + (cube[1] - spectator[1]) ** 2 + (cube[2] - spectator[2]) ** 2)
             cubeDistances.append(distance)
         # sort distances
-        print("sorting")
+        indexArray = range(0, len(cubeDistances))
         for index1, distance1 in enumerate(cubeDistances):
             smallestDistance = distance1
             forIndex = 0
-            for index2, distance2 in enumerate(cubeDistances[index1:]):
-                print ("distance2: ", distance2)
-                print ("smallestDistance: ", smallestDistance)
+            for index2, distance2 in enumerate(cubeDistances[index1 + 1:]):
                 if distance2 < smallestDistance:
                     smallestDistance = distance2
-                    print ("index1: ", index1)
-                    print ("index2: ", index2)
-                    forIndex = index2
-            print (cubeDistances)
-            print("for index: ", forIndex)
-            print("index1: ", index1)
-            print("cube for index: ", cubeDistances[forIndex])
-            print("cube index1: ", cubeDistances[index1])
-            print("allCubes1: ", allCubes)
-            if (cubeDistances[forIndex] >= cubeDistances[index1]):
+                    forIndex = index2 + index1 + 1
+            if (cubeDistances[forIndex] < cubeDistances[index1]):
+                distanceTemp = cubeDistances[forIndex]
                 cubeDistances[forIndex] = cubeDistances[index1]
-                cubeDistances[index1] = smallestDistance
-                temp = copy.deepcopy(allCubes[forIndex])
-                print("temp: ", temp)
-                print("allCubes1.1: ", allCubes)
-                print("allCubes[forIndex]: ", allCubes[forIndex])
-                print("copy.deepcopy(allCubes[index1]): ", copy.deepcopy(allCubes[index1]))
-                allCubes[forIndex][0] = copy.deepcopy(allCubes[index1][0])
-                allCubes[forIndex][1] = copy.deepcopy(allCubes[index1][1])
-                allCubes[forIndex][2] = copy.deepcopy(allCubes[index1][2])
-                allCubes[index1][0] = temp[0]
-                allCubes[index1][1] = temp[1]
-                allCubes[index1][2] = temp[2]
-                print ("cube2: ", cubeDistances)
-            print("allCubes2: ", allCubes)
-        for cube in allCubes:
-            cubeToPerspective(cube, spectator)
+                cubeDistances[index1] = distanceTemp
+                indexTemp = indexArray[forIndex]
+                indexArray[forIndex] = indexArray[index1]
+                indexArray[index1] = indexTemp
+        for index in indexArray:
+            cubeToPerspective(allCubes[index], spectator)
             
                     
                 
