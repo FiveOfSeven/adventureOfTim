@@ -41,15 +41,6 @@ def cubeCollision(cube1, cube2):
                 collision = True
     return collision
 
-
-
-
-def moveSquare(squares, idx, amount):
-    mySquares = copy.deepcopy(squares)
-    for square in squares:
-        for forIdx, point in enumerate(square):
-            square[forIdx][idx] += amount
-
 def perspectify(inSquare, spectator, color, squareSide):
     displayString =  "pygame.draw.polygon(gameDisplay, " + str(color) + ", ("
     displayBool = False
@@ -123,21 +114,16 @@ def threeD(pygame, dataArray):
     #square x, y, z, width, hight, depth; cube origin is at top left forward point
     playerCube = [325, 400, -75, 100, 100, 50]
     enemy1Cube = [325, 400, -300, 100, 100, 50]
-    allCubes = [playerCube, enemy1Cube]
+    bulletCube = [-100, 200, -300, 10, 10, 10]
+    allCubes = [playerCube, enemy1Cube, bulletCube]
     # 4 points of square
-    dSquare1 = [[350, 500, -50], [450, 500, -50], [450, 600, -50], [350, 600, -50]]
-    dSquare2 = [[350, 500, -100], [450, 500, -100], [450, 600, -100], [350, 600, -100]]
-    dSquare3 = [[450, 500, -50], [450, 500, -100], [450, 600, -100], [450, 600, -50]]
-    dSquare4 = [[350, 500, -50], [350, 500, -100], [350, 600, -100], [350, 600, -50]]
-    dSquare5 = [[350, 500, -50], [350, 500, -100], [450, 500, -100], [450, 500, -50]]
-    dSquare6 = [[350, 600, -50], [350, 600, -100], [450, 600, -100], [450, 600, -50]]
-    dSquare = [dSquare1, dSquare2, dSquare3, dSquare4, dSquare5, dSquare6]
     ppSquare = [[350, 500, -10], [450, 500, -10], [450, 600, -10], [350, 600, -10]]
     leftRail = [[0, 400, 0], [0, 400, -3000], [0, 600, -3000], [0, 600, 0]]
     rightRail = [[800, 400, 0], [800, 400, -3000], [800, 600, -3000], [800, 600, 0]]
     moveRecover = 0
     moveAmount = 10
     circleT = 0
+    playerDead = False
     while not threeDExit:
 	for event in pygame.event.get():
 	    if event.type == pygame.QUIT:
@@ -155,6 +141,11 @@ def threeD(pygame, dataArray):
         
         # 3 dimensional line:
         # (x - x1)/(x2 - x1) = (y - y1)/(y2 - y1) = (z - z1)/(z2 - z1) = c 
+        if pressed[pygame.K_SPACE]:
+            print("space pressed")
+            bulletCube[0] = playerCube[0] + 50
+            bulletCube[1] = playerCube[1] + 50
+            bulletCube[2] = playerCube[2] + -50
         if pressed[pygame.K_q]:
             spectator[0] -= 10
         if pressed[pygame.K_t]:
@@ -176,37 +167,33 @@ def threeD(pygame, dataArray):
         if abs(ppSquare[0][0]) > 10000: 
             threeDExit = True 
         if pressed[pygame.K_w] and ((spectator[1] + 0.3) <= ppSquare[0][1] or (spectator[1] - 0.3) >= ppSquare[0][1]):
-            moveSquare(dSquare, 2, -moveAmount)
             playerCube[2] -= moveAmount
             if cubeCollision(playerCube, enemy1Cube):
                 playerCube[2] += 300
 	if pressed[pygame.K_s]:
-            moveSquare(dSquare, 2, moveAmount)
             playerCube[2] += moveAmount
-	if pressed[pygame.K_a] and (dSquare1[0][0] >= 50):
-            moveSquare(dSquare, 0, -moveAmount)
+            if cubeCollision(playerCube, enemy1Cube):
+                playerCube[2] += 300
+	if pressed[pygame.K_a] and (playerCube[0] >= 50):
             playerCube[0] -= moveAmount
-	if pressed[pygame.K_d] and (dSquare1[0][0] <= 700):
-            moveSquare(dSquare, 0, moveAmount)
+            if cubeCollision(playerCube, enemy1Cube):
+                playerCube[2] += 300
+	if pressed[pygame.K_d] and (playerCube[0] <= 700):
             playerCube[0] += moveAmount
-	if pressed[pygame.K_k] and (dSquare1[0][1] >= 0):
-            moveSquare(dSquare, 1, -moveAmount)
+            if cubeCollision(playerCube, enemy1Cube):
+                playerCube[2] += 300
+	if pressed[pygame.K_k] and (playerCube[1] >= 0):
             playerCube[1] -= moveAmount
-	if pressed[pygame.K_j] and (dSquare1[0][1] <= 700):
-            moveSquare(dSquare, 1, moveAmount)
+            if cubeCollision(playerCube, enemy1Cube):
+                playerCube[2] += 300
+	if pressed[pygame.K_j] and (playerCube[1] <= 700):
             playerCube[1] += moveAmount
-        if pressed[pygame.K_z]:
-            dSquare1[0][1] += 10
-        if dSquare1[0][2] <= -1000:
+            if cubeCollision(playerCube, enemy1Cube):
+                playerCube[2] += 300
+        if playerCube[2] <= -1000 or playerDead == True:
             threeDExit = True
         perspectify(copy.deepcopy(leftRail), spectator, [255, 0, 0], "always")
         perspectify(copy.deepcopy(rightRail), spectator, [255, 0, 0], "always")
-        #perspectify(copy.deepcopy(dSquare6), spectator, [165, 119, 25], "bottom") #orange
-        #perspectify(copy.deepcopy(dSquare2), spectator, [150, 200, 50], "far") #puke green
-        #perspectify(copy.deepcopy(dSquare3), spectator, [50, 100, 255], "right") #blue
-        #perspectify(copy.deepcopy(dSquare4), spectator, [100, 20, 255], "left") #purple
-        #perspectify(copy.deepcopy(dSquare5), spectator, [50, 200, 100], "top") #light green
-        #perspectify(copy.deepcopy(dSquare1), spectator, [50, 0, 150], "close") #dark blue
 
         # 3d line distance pythagorean therom
         cubeDistances = []
@@ -217,20 +204,24 @@ def threeD(pygame, dataArray):
         # sort distances
         indexArray = range(0, len(cubeDistances))
         for index1, distance1 in enumerate(cubeDistances):
-            smallestDistance = distance1
+            largestDistance = distance1
             forIndex = 0
             for index2, distance2 in enumerate(cubeDistances[index1 + 1:]):
-                if distance2 < smallestDistance:
-                    smallestDistance = distance2
+                if distance2 > largestDistance:
+                    largestDistance = distance2
                     forIndex = index2 + index1 + 1
-            if (cubeDistances[forIndex] < cubeDistances[index1]):
-                distanceTemp = cubeDistances[forIndex]
-                cubeDistances[forIndex] = cubeDistances[index1]
-                cubeDistances[index1] = distanceTemp
-                indexTemp = indexArray[forIndex]
-                indexArray[forIndex] = indexArray[index1]
-                indexArray[index1] = indexTemp
+                print cubeDistances, forIndex, index1
+                if (cubeDistances[forIndex] > cubeDistances[index1]):
+                    distanceTemp = cubeDistances[forIndex]
+                    cubeDistances[forIndex] = cubeDistances[index1]
+                    cubeDistances[index1] = distanceTemp
+                    indexTemp = indexArray[forIndex]
+                    indexArray[forIndex] = indexArray[index1]
+                    indexArray[index1] = indexTemp
+                print cubeDistances, forIndex, index1
+        #display cubes
         for index in indexArray:
+            print indexArray
             cubeToPerspective(allCubes[index], spectator)
             
                     
