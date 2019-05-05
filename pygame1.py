@@ -3,6 +3,7 @@ import time
 import copy
 import math
 import pdb
+import random
 
 # import Enemy
 import sys
@@ -65,7 +66,6 @@ def perspectify(inSquare, spectator, color, squareSide):
     if displayBool and pointArguments > 2:
         
         if (squareSide == "always"):
-            #print "displayString: ", displayString
             exec(displayString)
         elif (squareSide == "right" and inSquare[0][0] < inSquare[1][0]):
             exec(displayString)
@@ -114,7 +114,8 @@ def threeD(pygame, dataArray):
     #square x, y, z, width, hight, depth; cube origin is at top left forward point
     playerCube = [325, 400, -75, 100, 100, 50]
     enemy1Cube = [325, 400, -300, 100, 100, 50]
-    bulletCube = [-100, 200, -300, 10, 10, 10]
+    #square x, y, z, width, hight, depth, bulletIsActiveBool, airTime
+    bulletCube = [-100, 200, -300, 10, 10, 10, False, 0]
     allCubes = [playerCube, enemy1Cube, bulletCube]
     # 4 points of square
     ppSquare = [[350, 500, -10], [450, 500, -10], [450, 600, -10], [350, 600, -10]]
@@ -124,6 +125,8 @@ def threeD(pygame, dataArray):
     moveAmount = 10
     circleT = 0
     playerDead = False
+    playerStartPosition = [325, 400, -75]
+    bulletStartPosition = [-100, 200, -300]
     while not threeDExit:
 	for event in pygame.event.get():
 	    if event.type == pygame.QUIT:
@@ -138,14 +141,31 @@ def threeD(pygame, dataArray):
         # x is the x value of dSquare, and x1 is the x value of spectator
         # Ax + By + Cz = D
         # two-point form:
-        
         # 3 dimensional line:
         # (x - x1)/(x2 - x1) = (y - y1)/(y2 - y1) = (z - z1)/(z2 - z1) = c 
-        if pressed[pygame.K_SPACE]:
-            print("space pressed")
+        if bulletCube[6] == True:
+            bulletCube[2] -= 5
+            bulletCube[7] += 1
+            if bulletCube[7] == 200:
+                bulletCube[7] = 0
+                bulletCube[6] = False
+                bulletCube[0] = bulletStartPosition[0]
+                bulletCube[1] = bulletStartPosition[1]
+                bulletCube[2] = bulletStartPosition[2]
+            if cubeCollision(bulletCube, enemy1Cube):
+                bulletCube[7] = 0
+                bulletCube[6] = False
+                bulletCube[0] = bulletStartPosition[0]
+                bulletCube[1] = bulletStartPosition[1]
+                bulletCube[2] = bulletStartPosition[2]
+                enemy1Cube[0] = random.randint(0,700)
+                enemy1Cube[1] = random.randint(0,500)
+                enemy1Cube[2] = random.randint(-1000,-100)
+        if pressed[pygame.K_SPACE] and bulletCube[6] == False:
             bulletCube[0] = playerCube[0] + 50
             bulletCube[1] = playerCube[1] + 50
             bulletCube[2] = playerCube[2] + -50
+            bulletCube[6] = True
         if pressed[pygame.K_q]:
             spectator[0] -= 10
         if pressed[pygame.K_t]:
@@ -169,27 +189,39 @@ def threeD(pygame, dataArray):
         if pressed[pygame.K_w] and ((spectator[1] + 0.3) <= ppSquare[0][1] or (spectator[1] - 0.3) >= ppSquare[0][1]):
             playerCube[2] -= moveAmount
             if cubeCollision(playerCube, enemy1Cube):
-                playerCube[2] += 300
-	if pressed[pygame.K_s]:
+                playerCube[0] = playerStartPosition[0]
+                playerCube[1] = playerStartPosition[1]
+                playerCube[2] = playerStartPosition[2]
+	if pressed[pygame.K_s] and playerCube[2] < -50:
             playerCube[2] += moveAmount
             if cubeCollision(playerCube, enemy1Cube):
-                playerCube[2] += 300
+                playerCube[0] = playerStartPosition[0]
+                playerCube[1] = playerStartPosition[1]
+                playerCube[2] = playerStartPosition[2]
 	if pressed[pygame.K_a] and (playerCube[0] >= 50):
             playerCube[0] -= moveAmount
             if cubeCollision(playerCube, enemy1Cube):
-                playerCube[2] += 300
+                playerCube[0] = playerStartPosition[0]
+                playerCube[1] = playerStartPosition[1]
+                playerCube[2] = playerStartPosition[2]
 	if pressed[pygame.K_d] and (playerCube[0] <= 700):
             playerCube[0] += moveAmount
             if cubeCollision(playerCube, enemy1Cube):
-                playerCube[2] += 300
+                playerCube[0] = playerStartPosition[0]
+                playerCube[1] = playerStartPosition[1]
+                playerCube[2] = playerStartPosition[2]
 	if pressed[pygame.K_k] and (playerCube[1] >= 0):
             playerCube[1] -= moveAmount
             if cubeCollision(playerCube, enemy1Cube):
-                playerCube[2] += 300
+                playerCube[0] = playerStartPosition[0]
+                playerCube[1] = playerStartPosition[1]
+                playerCube[2] = playerStartPosition[2]
 	if pressed[pygame.K_j] and (playerCube[1] <= 700):
             playerCube[1] += moveAmount
             if cubeCollision(playerCube, enemy1Cube):
-                playerCube[2] += 300
+                playerCube[0] = playerStartPosition[0]
+                playerCube[1] = playerStartPosition[1]
+                playerCube[2] = playerStartPosition[2]
         if playerCube[2] <= -1000 or playerDead == True:
             threeDExit = True
         perspectify(copy.deepcopy(leftRail), spectator, [255, 0, 0], "always")
@@ -210,7 +242,6 @@ def threeD(pygame, dataArray):
                 if distance2 > largestDistance:
                     largestDistance = distance2
                     forIndex = index2 + index1 + 1
-                print cubeDistances, forIndex, index1
                 if (cubeDistances[forIndex] > cubeDistances[index1]):
                     distanceTemp = cubeDistances[forIndex]
                     cubeDistances[forIndex] = cubeDistances[index1]
@@ -218,10 +249,8 @@ def threeD(pygame, dataArray):
                     indexTemp = indexArray[forIndex]
                     indexArray[forIndex] = indexArray[index1]
                     indexArray[index1] = indexTemp
-                print cubeDistances, forIndex, index1
         #display cubes
         for index in indexArray:
-            print indexArray
             cubeToPerspective(allCubes[index], spectator)
             
                     
@@ -354,7 +383,6 @@ while not gameExit:
 	if position[0] >= 770:
 		position[0] = 770
         if col_detect(bullet_pos, enemy_pos):
-            print("collision detected")
             #enemy_pos[0] = enemy_pos[0] + 100
             #enemy_pos[1] = enemy_pos[1] + 100
 	    bullet_pos[1] = -2000
