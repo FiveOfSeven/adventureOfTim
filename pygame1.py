@@ -108,6 +108,21 @@ def cubeToPerspective(playerCube, spectator):
             [playerCube[0] + playerCube[3], playerCube[1] + playerCube[4], playerCube[2] + playerCube[5]], \
             [playerCube[0], playerCube[1] + playerCube[4], playerCube[2] + playerCube[5]]], spectator, [50, 0, 150], "close") #dark blue
 
+def updateBullets(inactiveBulletCubes, activeBulletCubes, score):
+    # fibonacci function to determine the number of bullets
+    # http://www.maths.surrey.ac.uk/hosted-sites/R.Knott/Fibonacci/fibFormula.html
+    # n = fibonacci index (1, 2, 3, 4, 5, 6...) = bullets; Fib(n) = fib number (1, 2, 3, 5, 8...) = score
+    # Fib(n) = (((1.618034^n) - (0.618034^n)) / (2.236068))
+    # (1.618034^n) - (0.618034^n) = 2.236068 * score
+    # (1.618034^n) - (1.618034^(-1 * n)) = 2.236068 * score
+    # 6.1 calculater Nearest Fibonacci Number <= n calculator
+    # i = fib index; n = fib number (score)
+    # i = (log(n) + (log(5) / 2)) / (log(1.618034)
+    fibI = math.floor((math.log(score) + (math.log(5) / 2)) / (math.log(1.618034)))
+    print "fib: ", score, fibI
+    
+
+
 def threeD(pygame, dataArray):
     threeDExit = False
     spectator = [400, 250, 50]
@@ -116,6 +131,8 @@ def threeD(pygame, dataArray):
     enemy1Cube = [325, 400, -300, 100, 100, 50]
     #square x, y, z, width, hight, depth, bulletIsActiveBool, airTime
     bulletCube = [-100, 200, -300, 10, 10, 10, False, 0]
+    inactiveBulletCubes = []
+    activeBulletCubes = []
     allCubes = [playerCube, enemy1Cube, bulletCube]
     # 4 points of square
     ppSquare = [[350, 500, -10], [450, 500, -10], [450, 600, -10], [350, 600, -10]]
@@ -127,6 +144,7 @@ def threeD(pygame, dataArray):
     playerDead = False
     playerStartPosition = [325, 400, -75]
     bulletStartPosition = [-100, 200, -300]
+    score = 0
     while not threeDExit:
 	for event in pygame.event.get():
 	    if event.type == pygame.QUIT:
@@ -143,6 +161,32 @@ def threeD(pygame, dataArray):
         # two-point form:
         # 3 dimensional line:
         # (x - x1)/(x2 - x1) = (y - y1)/(y2 - y1) = (z - z1)/(z2 - z1) = c 
+
+        font = pygame.font.Font('freesansbold.ttf', 32)
+        text = font.render('score: ' + str(score), True, [100, 200, 255], [255, 200, 100])
+        gameDisplay.blit(text, (0,0))
+
+        # add bullets
+        if score > 0:
+            updateBullets(inactiveBulletCubes, activeBulletCubes, score)
+        updateBullets(inactiveBulletCubes, activeBulletCubes, 5)
+        updateBullets(inactiveBulletCubes, activeBulletCubes, 8)
+        updateBullets(inactiveBulletCubes, activeBulletCubes, 13)
+        updateBullets(inactiveBulletCubes, activeBulletCubes, 21)
+        updateBullets(inactiveBulletCubes, activeBulletCubes, 50)
+            
+
+
+        # enemy movement
+        if enemy1Cube[2] < -75:
+            enemy1Cube[2] += 1
+        else:
+            enemy1Cube[0] = random.randint(0,700)
+            enemy1Cube[1] = random.randint(0,500)
+            enemy1Cube[2] = random.randint(-1000,-300)
+            threeDExit = True
+
+
         if bulletCube[6] == True:
             bulletCube[2] -= 5
             bulletCube[7] += 1
@@ -154,13 +198,10 @@ def threeD(pygame, dataArray):
                 bulletCube[2] = bulletStartPosition[2]
             if cubeCollision(bulletCube, enemy1Cube):
                 bulletCube[7] = 0
-                bulletCube[6] = False
-                bulletCube[0] = bulletStartPosition[0]
-                bulletCube[1] = bulletStartPosition[1]
-                bulletCube[2] = bulletStartPosition[2]
                 enemy1Cube[0] = random.randint(0,700)
                 enemy1Cube[1] = random.randint(0,500)
-                enemy1Cube[2] = random.randint(-1000,-100)
+                enemy1Cube[2] = random.randint(-1000,-300)
+                score += 1
         if pressed[pygame.K_SPACE] and bulletCube[6] == False:
             bulletCube[0] = playerCube[0] + 50
             bulletCube[1] = playerCube[1] + 50
@@ -335,6 +376,7 @@ bullet_time = 80
 enemy_pos = [400, 100, 30, 30]
 gameDisplay = pygame.display.set_mode((800,600))
 pygame.display.set_caption('game_of_the_bloxx')
+playerSpeed = 5
 
 
 
@@ -367,19 +409,19 @@ while not gameExit:
 		bullet_pos[1] = position[1] - 20
 		bullet_pos[0] = position[0] + 13
 	if pressed[pygame.K_w]:
-		position[1] = position[1] - 10
+		position[1] = position[1] - playerSpeed
         if position[1] <= 30:
             position[1] = 30
 	if pressed[pygame.K_s]:
-		position[1] = position[1] + 10
+		position[1] = position[1] + playerSpeed
         if position[1] >= 590:
             position[1] = 590
 	if pressed[pygame.K_a]:
-		position[0] = position[0] - 10
+		position[0] = position[0] - playerSpeed
 	if position[0] <= 0:
 		position[0] = 0
 	if pressed[pygame.K_d]:
-		position[0] = position[0] + 10
+		position[0] = position[0] + playerSpeed
 	if position[0] >= 770:
 		position[0] = 770
         if col_detect(bullet_pos, enemy_pos):
