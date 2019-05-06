@@ -118,7 +118,7 @@ def updateBullets(inactiveBulletCubes, activeBulletCubes, score):
     # 6.1 calculater Nearest Fibonacci Number <= n calculator
     # i = fib index; n = fib number (score)
     # i = (log(n) + (log(5) / 2)) / (log(1.618034)
-    fibI = math.floor((math.log(score) + (math.log(5) / 2)) / (math.log(1.618034)))
+    fibI = math.floor((math.log(score) + (math.log(5) / 2)) / (math.log(1.618034)) + 0.1)
     print "fib: ", score, fibI
     
 
