@@ -120,6 +120,9 @@ def updateBullets(inactiveBulletCubes, activeBulletCubes, score):
     # i = (log(n) + (log(5) / 2)) / (log(1.618034)
     fibI = math.floor((math.log(score) + (math.log(5) / 2)) / (math.log(1.618034)) + 0.1)
     print "fib: ", score, fibI
+    totalBullets = len(inactiveBulletCubes) + len(activeBulletCubes)
+    if (totalBullets < fibI):
+        pass #add a bullet to inactiveBulletCubes
     
 
 
