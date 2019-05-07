@@ -1,3 +1,5 @@
+import pdb
+
 def col_detect(squareA, squareB):
     xminA = squareA[0]
     xminB = squareB[0]
@@ -21,19 +23,21 @@ def col_detect(squareA, squareB):
             return_value = True
     return return_value 
 
-def platform_detect(squareA, squareB):
+def platform_detect(squareA, squareArrayB):
     #squareA is the player, squareB is the platform
     return_value = False
     ytopBVal = -300
-    for platform in squareB:
-        ytopB = platform[1]
-        ybotA = squareA[1] + squareA[3]
-        xminB = platform[0]
-        xminA = squareA[0]
-        xmaxB = platform[0] + platform[2]
-        xmaxA = squareA[0] + squareA[2]
-        if ((ytopB >= ybotA and ytopB <= ybotA + 11) and ((xminB <= xminA and xmaxB >= xminA) or (xminB <= xmaxA and xmaxB >= xmaxA)\
-                or (xminA <= xminB and xmaxA >= xminB) or (xminA <= xmaxB and xmaxA >= xmaxB))):
-            return_value = True
-            ytopBVal = ytopB
+    #pdb.set_trace()
+    for squareB in squareArrayB:
+        for platform in squareB:
+            ytopB = platform[1]
+            ybotA = squareA[1] + squareA[3]
+            xminB = platform[0]
+            xminA = squareA[0]
+            xmaxB = platform[0] + platform[2]
+            xmaxA = squareA[0] + squareA[2]
+            if ((ytopB >= ybotA and ytopB <= ybotA + 11) and ((xminB <= xminA and xmaxB >= xminA) or (xminB <= xmaxA and xmaxB >= xmaxA)\
+                    or (xminA <= xminB and xmaxA >= xminB) or (xminA <= xmaxB and xmaxA >= xmaxB))):
+                return_value = True
+                ytopBVal = ytopB
     return [return_value, ytopBVal]
