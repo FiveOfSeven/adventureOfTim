@@ -146,10 +146,9 @@ def threeD(pygame, dataArray):
     playerCube = [325, 400, -75, 20, 20, 5]
     enemy1Cube = [325, 400, -300, 100, 100, 50]
     #square x, y, z, width, hight, depth, bulletIsActiveBool, airTime
-    bulletCube = [-100, 200, -300, 10, 10, 10, False, 0]
     inactiveBulletCubes = []
     activeBulletCubes = []
-    allCubes = [playerCube, enemy1Cube, bulletCube]
+    allCubes = [playerCube, enemy1Cube]
     # 4 points of square
     ppSquare = [[350, 500, -10], [450, 500, -10], [450, 600, -10], [350, 600, -10]]
     leftRail = [[0, 400, 0], [0, 400, -3000], [0, 600, -3000], [0, 600, 0]]
@@ -161,7 +160,7 @@ def threeD(pygame, dataArray):
     playerStartPosition = [325, 400, -75]
     bulletStartPosition = [-100, 200, -300, 10, 10, 10, 0]
     score = 0
-    shotCooldownStart = 20
+    shotCooldownStart = 10
     shotCooldown = 0
     while not threeDExit:
 	for event in pygame.event.get():
@@ -206,38 +205,25 @@ def threeD(pygame, dataArray):
         for index, bullet in reversed(list(enumerate(activeBulletCubes[:]))):
             bullet[6] += 1
             bullet[2] -= 5
-            if bullet[6] > 100:
+            if bullet[6] > 200:
                 del activeBulletCubes[index]
             if cubeCollision(bullet, enemy1Cube):
                 enemy1Cube[0] = random.randint(0,700)
                 enemy1Cube[1] = random.randint(0,500)
                 enemy1Cube[2] = random.randint(-1000,-300)
                 score += 1
-        if bulletCube[6] == True:
-            bulletCube[2] -= 5
-            bulletCube[7] += 1
-            if bulletCube[7] == 200:
-                bulletCube[7] = 0
-                bulletCube[6] = False
-                bulletCube[0] = bulletStartPosition[0]
-                bulletCube[1] = bulletStartPosition[1]
-                bulletCube[2] = bulletStartPosition[2]
 
 
         # shot cooldown
         if shotCooldown > 0:
             shotCooldown -= 1
             print shotCooldown
-        if pressed[pygame.K_SPACE] and bulletCube[6] == False and shotCooldown <= 0 and len(inactiveBulletCubes) > 0:
-            #bulletCube[0] = playerCube[0] + (playerCube[3] / 2) - (bulletCube[3] / 2)
-            #bulletCube[1] = playerCube[1] + (playerCube[4] / 2) - (bulletCube[4] / 2)
-            #bulletCube[2] = playerCube[2] + (playerCube[5] / 2) - (bulletCube[5] / 2)
+        if pressed[pygame.K_SPACE] and shotCooldown <= 0 and len(inactiveBulletCubes) > 0:
             activeBulletCubes.append(bulletStartPosition[:])
             del inactiveBulletCubes[-1]
             activeBulletCubes[-1][0] = playerCube[0] + (playerCube[3] / 2) - (activeBulletCubes[-1][3] / 2)
             activeBulletCubes[-1][1] = playerCube[1] + (playerCube[4] / 2) - (activeBulletCubes[-1][4] / 2)
             activeBulletCubes[-1][2] = playerCube[2] + (playerCube[5] / 2) - (activeBulletCubes[-1][5] / 2)
-            bulletCube[6] = True
             shotCooldown = shotCooldownStart
         if pressed[pygame.K_q]:
             spectator[0] -= 10
@@ -303,7 +289,7 @@ def threeD(pygame, dataArray):
             cubeToPerspective(bullet, spectator)
 
         # delete, then append active bullets to allCubes
-        allCubes = allCubes[0:3]
+        allCubes = allCubes[0:2]
         for cube in activeBulletCubes:
             allCubes.append(cube[:])
 
