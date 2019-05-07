@@ -122,7 +122,8 @@ def updateBullets(inactiveBulletCubes, activeBulletCubes, score):
     print "fib: ", score, fibI
     totalBullets = len(inactiveBulletCubes) + len(activeBulletCubes)
     if (totalBullets < fibI):
-        pass #add a bullet to inactiveBulletCubes
+        inactiveBulletCubes.append()
+        #add a bullet to inactiveBulletCubes
     
 
 
@@ -130,7 +131,7 @@ def threeD(pygame, dataArray):
     threeDExit = False
     spectator = [400, 250, 50]
     #square x, y, z, width, hight, depth; cube origin is at top left forward point
-    playerCube = [325, 400, -75, 100, 100, 50]
+    playerCube = [325, 400, -75, 20, 20, 5]
     enemy1Cube = [325, 400, -300, 100, 100, 50]
     #square x, y, z, width, hight, depth, bulletIsActiveBool, airTime
     bulletCube = [-100, 200, -300, 10, 10, 10, False, 0]
@@ -206,9 +207,9 @@ def threeD(pygame, dataArray):
                 enemy1Cube[2] = random.randint(-1000,-300)
                 score += 1
         if pressed[pygame.K_SPACE] and bulletCube[6] == False:
-            bulletCube[0] = playerCube[0] + 50
-            bulletCube[1] = playerCube[1] + 50
-            bulletCube[2] = playerCube[2] + -50
+            bulletCube[0] = playerCube[0] + (playerCube[3] / 2) - (bulletCube[3] / 2)
+            bulletCube[1] = playerCube[1] + (playerCube[4] / 2) - (bulletCube[4] / 2)
+            bulletCube[2] = playerCube[2] + (playerCube[5] / 2) - (bulletCube[5] / 2)
             bulletCube[6] = True
         if pressed[pygame.K_q]:
             spectator[0] -= 10
@@ -360,7 +361,7 @@ def platformer(pygame, dataArray):
                     jumpRecover = 60
         elif (dataArray[0][1] >= 600):
             platformerExit = True
-            threeD(pygame, dataArray)
+            #threeD(pygame, dataArray)
         else:
             dataArray[0][1] += 10
         time.sleep(.01)
@@ -377,6 +378,7 @@ bullet_pos = [position[0] + 10, position[1] - 2000, 5, 10]
 bullet_bool = False
 bullet_time = 80
 enemy_pos = [400, 100, 30, 30]
+enemy2_pos = [200, 100, 30, 30]
 gameDisplay = pygame.display.set_mode((800,600))
 pygame.display.set_caption('game_of_the_bloxx')
 playerSpeed = 5
@@ -395,6 +397,7 @@ while not gameExit:
 	gameDisplay.fill(black)
         pygame.draw.rect(gameDisplay, pink, [bullet_pos[0], bullet_pos[1], bullet_pos[2], bullet_pos[3]]) 
         pygame.draw.rect(gameDisplay, green, [enemy_pos[0], enemy_pos[1], enemy_pos[2], enemy_pos[3]])
+        pygame.draw.rect(gameDisplay, green, [enemy2_pos[0], enemy2_pos[1], enemy2_pos[2], enemy2_pos[3]])
 	pygame.draw.rect(gameDisplay, red, [position[0], position[1], position[2], position[3]])	
 	pygame.draw.rect(gameDisplay, white, [position[0] + 20, position[1], 10, 10])
 	pygame.draw.rect(gameDisplay, green, [position[0] + 10, position[1] - 30, 10, 20])
@@ -432,4 +435,7 @@ while not gameExit:
             #enemy_pos[1] = enemy_pos[1] + 100
 	    bullet_pos[1] = -2000
             platformer(pygame, [position])
+        if col_detect(bullet_pos, enemy2_pos):
+	    bullet_pos[1] = -2000
+            threeD(pygame, [position])
 	pygame.display.update()
