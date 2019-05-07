@@ -122,23 +122,16 @@ def updateBullets(inactiveBulletCubes, activeBulletCubes, score, bulletStartPosi
         fibI = 1
     else:
         fibI = math.floor((math.log(score) + (math.log(5) / 2)) / (math.log(1.618034)) + 0.1)
-    print "fib: ", score, fibI
+        fibI = fibI / 3
     totalBullets = len(inactiveBulletCubes) + len(activeBulletCubes)
-    print 'totalBullets, fibI: ', totalBullets, fibI
     if (totalBullets < fibI):
         inactiveBulletCubes.append(bulletStartPosition[:])
-        print 'inactiveBulletCubes1: ', inactiveBulletCubes
-        print 'bulletStartPosition[0]: ', bulletStartPosition[0]
         inactiveBulletCubes[-1][0] = bulletStartPosition[:][0] + (len(inactiveBulletCubes) * 20)
-        print 'bulletStartPosition[0]2: ', bulletStartPosition[0]
-        print 'inactiveBulletCubes2: ', inactiveBulletCubes
-        print 'inactiveBulletCubes[-1]: ', inactiveBulletCubes[-1]
-        print 'inactiveBulletCubes[-1][0]: ', inactiveBulletCubes[-1][0]
         #time.sleep(5)
         #add a bullet to inactiveBulletCubes
     
 
-
+#dataArray: position, score
 def threeD(pygame, dataArray):
     threeDExit = False
     spectator = [400, 250, 50]
@@ -159,7 +152,7 @@ def threeD(pygame, dataArray):
     playerDead = False
     playerStartPosition = [325, 400, -75]
     bulletStartPosition = [-100, 200, -300, 10, 10, 10, 0]
-    score = 0
+    score = dataArray[1]
     shotCooldownStart = 10
     shotCooldown = 0
     while not threeDExit:
@@ -185,10 +178,8 @@ def threeD(pygame, dataArray):
 
 
         # add bullets
-        print 'score: ', score
         if score >= 0:
             updateBullets(inactiveBulletCubes, activeBulletCubes, score, bulletStartPosition)
-        print('inactiveBulletCubes: ', inactiveBulletCubes)
             
 
 
@@ -198,8 +189,11 @@ def threeD(pygame, dataArray):
         else:
             enemy1Cube[0] = random.randint(0,700)
             enemy1Cube[1] = random.randint(0,500)
-            enemy1Cube[2] = random.randint(-1000,-300)
-            threeDExit = True
+            enemy1Cube[2] = random.randint(-1000,500)
+            score -= 10
+            if score < 0:
+                score = 0
+            #threeDExit = True
 
         # bullet movement
         for index, bullet in reversed(list(enumerate(activeBulletCubes[:]))):
@@ -217,7 +211,6 @@ def threeD(pygame, dataArray):
         # shot cooldown
         if shotCooldown > 0:
             shotCooldown -= 1
-            print shotCooldown
         if pressed[pygame.K_SPACE] and shotCooldown <= 0 and len(inactiveBulletCubes) > 0:
             activeBulletCubes.append(bulletStartPosition[:])
             del inactiveBulletCubes[-1]
@@ -225,33 +218,33 @@ def threeD(pygame, dataArray):
             activeBulletCubes[-1][1] = playerCube[1] + (playerCube[4] / 2) - (activeBulletCubes[-1][4] / 2)
             activeBulletCubes[-1][2] = playerCube[2] + (playerCube[5] / 2) - (activeBulletCubes[-1][5] / 2)
             shotCooldown = shotCooldownStart
-        if pressed[pygame.K_q]:
-            spectator[0] -= 10
-        if pressed[pygame.K_t]:
-            # Equation of the Circle
-            # a and b is the origin of the spectator (circle)
-            # (x - a)^2 + (y - b)^2 = r^2
-            # parametric form
-            # x = a + r((1 - t^2) / (1 + t^2))
-            # y = b + r(2t / (1 + t^2))
-            circleT += 0.1
-            spectator[0] = 400 + 1000 * (1 - (circleT * circleT) / (1 + (circleT * circleT)))
-            spectator[1] = 250 + 1000 * ((2 * circleT) / (1 + (circleT * circleT)))
-        if pressed[pygame.K_e]:
-            spectator[0] += 10
-        if pressed[pygame.K_r]:
-            circleT -= 0.1
-            spectator[0] = 400 + 1000 * (1 - (circleT * circleT) / (1 + (circleT * circleT)))
-            spectator[1] = 250 + 1000 * ((2 * circleT) / (1 + (circleT * circleT)))
+        #if pressed[pygame.K_q]:
+        #    spectator[0] -= 10
+        #if pressed[pygame.K_t]:
+        #    # Equation of the Circle
+        #    # a and b is the origin of the spectator (circle)
+        #    # (x - a)^2 + (y - b)^2 = r^2
+        #    # parametric form
+        #    # x = a + r((1 - t^2) / (1 + t^2))
+        #    # y = b + r(2t / (1 + t^2))
+        #    circleT += 0.1
+        #    spectator[0] = 400 + 1000 * (1 - (circleT * circleT) / (1 + (circleT * circleT)))
+        #    spectator[1] = 250 + 1000 * ((2 * circleT) / (1 + (circleT * circleT)))
+        ##if pressed[pygame.K_e]:
+        ##    spectator[0] += 10
+        #if pressed[pygame.K_r]:
+        #    circleT -= 0.1
+        #    spectator[0] = 400 + 1000 * (1 - (circleT * circleT) / (1 + (circleT * circleT)))
+        #    spectator[1] = 250 + 1000 * ((2 * circleT) / (1 + (circleT * circleT)))
         if abs(ppSquare[0][0]) > 10000: 
             threeDExit = True 
-        if pressed[pygame.K_w] and ((spectator[1] + 0.3) <= ppSquare[0][1] or (spectator[1] - 0.3) >= ppSquare[0][1]):
+        if pressed[pygame.K_k] and ((spectator[1] + 0.3) <= ppSquare[0][1] or (spectator[1] - 0.3) >= ppSquare[0][1]):
             playerCube[2] -= moveAmount
             if cubeCollision(playerCube, enemy1Cube):
                 playerCube[0] = playerStartPosition[0]
                 playerCube[1] = playerStartPosition[1]
                 playerCube[2] = playerStartPosition[2]
-	if pressed[pygame.K_s] and playerCube[2] < -50:
+	if pressed[pygame.K_j] and playerCube[2] < -50:
             playerCube[2] += moveAmount
             if cubeCollision(playerCube, enemy1Cube):
                 playerCube[0] = playerStartPosition[0]
@@ -269,13 +262,13 @@ def threeD(pygame, dataArray):
                 playerCube[0] = playerStartPosition[0]
                 playerCube[1] = playerStartPosition[1]
                 playerCube[2] = playerStartPosition[2]
-	if pressed[pygame.K_k] and (playerCube[1] >= 0):
+	if pressed[pygame.K_w] and (playerCube[1] >= 0):
             playerCube[1] -= moveAmount
             if cubeCollision(playerCube, enemy1Cube):
                 playerCube[0] = playerStartPosition[0]
                 playerCube[1] = playerStartPosition[1]
                 playerCube[2] = playerStartPosition[2]
-	if pressed[pygame.K_j] and (playerCube[1] <= 700):
+	if pressed[pygame.K_s] and (playerCube[1] <= 700):
             playerCube[1] += moveAmount
             if cubeCollision(playerCube, enemy1Cube):
                 playerCube[0] = playerStartPosition[0]
@@ -331,7 +324,8 @@ def threeD(pygame, dataArray):
         #ppSquare[1][1]), (ppSquare[2][0], ppSquare[2][1]), (ppSquare[3][0], ppSquare[3][1])))
 	time.sleep(.01)
 	pygame.display.update()
-
+    score -= 10
+    return [dataArray[0], score]
 
 def platformer(pygame, dataArray):
     platformerExit = False
@@ -341,6 +335,7 @@ def platformer(pygame, dataArray):
             [0, 200, 50, 10], [100, 150, 50, 10], [200, 100, 50, 10], [300, 50, 50, 10]]
     level2Platforms = [[400, 500, 300, 10], [500, 450, 10, 10], [400, 400, 10, 10], [300, 350, 10, 10], [200, 300, 10, 10], [100, 250, 10, 10], \
             [0, 200, 10, 10], [100, 150, 10, 10], [200, 100, 10, 10], [300, 50, 10, 10]]
+    level3PLatforms = [[0, 500, 800, 10]]
     platforms_pos = [[400, 500, 300, 10], [100, 450, 300, 10], [400, 400, 50, 10], [300, 350, 50, 10], [200, 300, 50, 10], [100, 250, 50, 10], \
             [0, 200, 50, 10], [100, 150, 50, 10], [200, 100, 50, 10], [300, 50, 50, 10]]
     win_box = [500, 200, 20, 20]
@@ -352,20 +347,33 @@ def platformer(pygame, dataArray):
                 platformerExit = True
 	pressed = pygame.key.get_pressed()
 	gameDisplay.fill((0, 50, 0))
+
+        font = pygame.font.Font('freesansbold.ttf', 32)
+        text = font.render('score: ' + str(dataArray[1]), True, [100, 200, 255], [255, 200, 100])
+        gameDisplay.blit(text, (0,0))
+        
         pygame.draw.rect(gameDisplay, (255, 255, 0), [dataArray[0][0], dataArray[0][1], 20, 20])
         if level == 1:
             pygame.draw.rect(gameDisplay, (200, 0, 0), [win_box[0], win_box[1], win_box[2], win_box[3]])
         elif level ==2:
             pygame.draw.rect(gameDisplay, (200, 0, 0), [win_box_level2[0], win_box_level2[1], win_box_level2[2], win_box_level2[3]])
-        for plat_pos in platforms_pos: # draw platforms
-            pygame.draw.rect(gameDisplay, (255, 100, 200), [plat_pos[0], plat_pos[1], plat_pos[2], plat_pos[3]])
+        elif level == 3:
+            pygame.draw.rect(gameDisplay, (200, 0, 0), [0, 500, 800, 10])
+        if (level == 1) or (level == 2):
+            for plat_pos in platforms_pos: # draw platforms
+                pygame.draw.rect(gameDisplay, (255, 100, 200), [plat_pos[0], plat_pos[1], plat_pos[2], plat_pos[3]])
         if jumpRecover > 0:
             jumpRecover -= 1
         if col_detect(dataArray[0], win_box) and level == 1:
             platforms_pos = level2Platforms
+            dataArray[1] += 5
             level = 2
         elif col_detect(dataArray[0], win_box_level2) and level == 2:
-            platformerExit = True
+            dataArray[1] += 7
+            print dataArray[1], 'array1'
+            platforms_pos = level2Platforms
+            #platformerExit = True
+            level = 3
 	if pressed[pygame.K_a]:
 	    dataArray[0][0] -= 4
 	if pressed[pygame.K_d]:
@@ -378,7 +386,7 @@ def platformer(pygame, dataArray):
             dataArray[0][1] = platform_detect(dataArray[0], platforms_pos)[1] - dataArray[0][3]
             if pressed[pygame.K_w]:
                 if jumpVelocity <= 0 and jumpRecover <= 0:
-                    jumpVelocity = 20
+                    jumpVelocity = 20 + (dataArray[1] / 10)
                     jumpRecover = 60
         elif (dataArray[0][1] >= 600):
             platformerExit = True
@@ -387,6 +395,8 @@ def platformer(pygame, dataArray):
             dataArray[0][1] += 10
         time.sleep(.01)
         pygame.display.update()
+    dataArray[1] -= 5
+    return dataArray
  
 pink = (255, 100, 100)
 white = (255,255,255)
@@ -403,6 +413,8 @@ enemy2_pos = [200, 100, 30, 30]
 gameDisplay = pygame.display.set_mode((800,600))
 pygame.display.set_caption('game_of_the_bloxx')
 playerSpeed = 5
+score = 0
+dataArray = [position, score]
 
 
 
@@ -424,6 +436,11 @@ while not gameExit:
 	pygame.draw.rect(gameDisplay, green, [position[0] + 10, position[1] - 30, 10, 20])
 	time.sleep(.01)
 	#time.sleep(.1)
+
+        font = pygame.font.Font('freesansbold.ttf', 32)
+        text = font.render('score: ' + str(score), True, [100, 200, 255], [255, 200, 100])
+        gameDisplay.blit(text, (0,0))
+
 	pressed = pygame.key.get_pressed()
 	if bullet_bool:
 		bullet_pos[1] = bullet_pos[1] - 10
@@ -435,6 +452,8 @@ while not gameExit:
 		bullet_bool = True
 		bullet_pos[1] = position[1] - 20
 		bullet_pos[0] = position[0] + 13
+	if pressed[pygame.K_b]:
+            score += 10
 	if pressed[pygame.K_w]:
 		position[1] = position[1] - playerSpeed
         if position[1] <= 30:
@@ -455,8 +474,13 @@ while not gameExit:
             #enemy_pos[0] = enemy_pos[0] + 100
             #enemy_pos[1] = enemy_pos[1] + 100
 	    bullet_pos[1] = -2000
-            platformer(pygame, [position])
+            dataArray = platformer(pygame, [dataArray[0], score])
+            score = dataArray[1]
+            if score < 0:
+                score = 0
+                dataArray[1] = 0
         if col_detect(bullet_pos, enemy2_pos):
 	    bullet_pos[1] = -2000
-            threeD(pygame, [position])
+            dataArray = threeD(pygame, [dataArray[0], score])
+            score = dataArray[1]
 	pygame.display.update()
