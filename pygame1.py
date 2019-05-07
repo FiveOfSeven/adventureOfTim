@@ -108,7 +108,7 @@ def cubeToPerspective(playerCube, spectator):
             [playerCube[0] + playerCube[3], playerCube[1] + playerCube[4], playerCube[2] + playerCube[5]], \
             [playerCube[0], playerCube[1] + playerCube[4], playerCube[2] + playerCube[5]]], spectator, [50, 0, 150], "close") #dark blue
 
-def updateBullets(inactiveBulletCubes, activeBulletCubes, score):
+def updateBullets(inactiveBulletCubes, activeBulletCubes, score, bulletStartPosition):
     # fibonacci function to determine the number of bullets
     # http://www.maths.surrey.ac.uk/hosted-sites/R.Knott/Fibonacci/fibFormula.html
     # n = fibonacci index (1, 2, 3, 4, 5, 6...) = bullets; Fib(n) = fib number (1, 2, 3, 5, 8...) = score
@@ -118,11 +118,23 @@ def updateBullets(inactiveBulletCubes, activeBulletCubes, score):
     # 6.1 calculater Nearest Fibonacci Number <= n calculator
     # i = fib index; n = fib number (score)
     # i = (log(n) + (log(5) / 2)) / (log(1.618034)
-    fibI = math.floor((math.log(score) + (math.log(5) / 2)) / (math.log(1.618034)) + 0.1)
+    if score <= 0:
+        fibI = 1
+    else:
+        fibI = math.floor((math.log(score) + (math.log(5) / 2)) / (math.log(1.618034)) + 0.1)
     print "fib: ", score, fibI
     totalBullets = len(inactiveBulletCubes) + len(activeBulletCubes)
+    print 'totalBullets, fibI: ', totalBullets, fibI
     if (totalBullets < fibI):
-        inactiveBulletCubes.append()
+        inactiveBulletCubes.append(bulletStartPosition[:])
+        print 'inactiveBulletCubes1: ', inactiveBulletCubes
+        print 'bulletStartPosition[0]: ', bulletStartPosition[0]
+        inactiveBulletCubes[-1][0] = bulletStartPosition[:][0] + (len(inactiveBulletCubes) * 20)
+        print 'bulletStartPosition[0]2: ', bulletStartPosition[0]
+        print 'inactiveBulletCubes2: ', inactiveBulletCubes
+        print 'inactiveBulletCubes[-1]: ', inactiveBulletCubes[-1]
+        print 'inactiveBulletCubes[-1][0]: ', inactiveBulletCubes[-1][0]
+        #time.sleep(5)
         #add a bullet to inactiveBulletCubes
     
 
@@ -147,8 +159,10 @@ def threeD(pygame, dataArray):
     circleT = 0
     playerDead = False
     playerStartPosition = [325, 400, -75]
-    bulletStartPosition = [-100, 200, -300]
+    bulletStartPosition = [-100, 200, -300, 10, 10, 10, 0]
     score = 0
+    shotCooldownStart = 20
+    shotCooldown = 0
     while not threeDExit:
 	for event in pygame.event.get():
 	    if event.type == pygame.QUIT:
@@ -170,14 +184,12 @@ def threeD(pygame, dataArray):
         text = font.render('score: ' + str(score), True, [100, 200, 255], [255, 200, 100])
         gameDisplay.blit(text, (0,0))
 
+
         # add bullets
-        if score > 0:
-            updateBullets(inactiveBulletCubes, activeBulletCubes, score)
-        updateBullets(inactiveBulletCubes, activeBulletCubes, 5)
-        updateBullets(inactiveBulletCubes, activeBulletCubes, 8)
-        updateBullets(inactiveBulletCubes, activeBulletCubes, 13)
-        updateBullets(inactiveBulletCubes, activeBulletCubes, 21)
-        updateBullets(inactiveBulletCubes, activeBulletCubes, 50)
+        print 'score: ', score
+        if score >= 0:
+            updateBullets(inactiveBulletCubes, activeBulletCubes, score, bulletStartPosition)
+        print('inactiveBulletCubes: ', inactiveBulletCubes)
             
 
 
@@ -190,7 +202,17 @@ def threeD(pygame, dataArray):
             enemy1Cube[2] = random.randint(-1000,-300)
             threeDExit = True
 
-
+        # bullet movement
+        for index, bullet in reversed(list(enumerate(activeBulletCubes[:]))):
+            bullet[6] += 1
+            bullet[2] -= 5
+            if bullet[6] > 100:
+                del activeBulletCubes[index]
+            if cubeCollision(bullet, enemy1Cube):
+                enemy1Cube[0] = random.randint(0,700)
+                enemy1Cube[1] = random.randint(0,500)
+                enemy1Cube[2] = random.randint(-1000,-300)
+                score += 1
         if bulletCube[6] == True:
             bulletCube[2] -= 5
             bulletCube[7] += 1
@@ -200,17 +222,23 @@ def threeD(pygame, dataArray):
                 bulletCube[0] = bulletStartPosition[0]
                 bulletCube[1] = bulletStartPosition[1]
                 bulletCube[2] = bulletStartPosition[2]
-            if cubeCollision(bulletCube, enemy1Cube):
-                bulletCube[7] = 0
-                enemy1Cube[0] = random.randint(0,700)
-                enemy1Cube[1] = random.randint(0,500)
-                enemy1Cube[2] = random.randint(-1000,-300)
-                score += 1
-        if pressed[pygame.K_SPACE] and bulletCube[6] == False:
-            bulletCube[0] = playerCube[0] + (playerCube[3] / 2) - (bulletCube[3] / 2)
-            bulletCube[1] = playerCube[1] + (playerCube[4] / 2) - (bulletCube[4] / 2)
-            bulletCube[2] = playerCube[2] + (playerCube[5] / 2) - (bulletCube[5] / 2)
+
+
+        # shot cooldown
+        if shotCooldown > 0:
+            shotCooldown -= 1
+            print shotCooldown
+        if pressed[pygame.K_SPACE] and bulletCube[6] == False and shotCooldown <= 0 and len(inactiveBulletCubes) > 0:
+            #bulletCube[0] = playerCube[0] + (playerCube[3] / 2) - (bulletCube[3] / 2)
+            #bulletCube[1] = playerCube[1] + (playerCube[4] / 2) - (bulletCube[4] / 2)
+            #bulletCube[2] = playerCube[2] + (playerCube[5] / 2) - (bulletCube[5] / 2)
+            activeBulletCubes.append(bulletStartPosition[:])
+            del inactiveBulletCubes[-1]
+            activeBulletCubes[-1][0] = playerCube[0] + (playerCube[3] / 2) - (activeBulletCubes[-1][3] / 2)
+            activeBulletCubes[-1][1] = playerCube[1] + (playerCube[4] / 2) - (activeBulletCubes[-1][4] / 2)
+            activeBulletCubes[-1][2] = playerCube[2] + (playerCube[5] / 2) - (activeBulletCubes[-1][5] / 2)
             bulletCube[6] = True
+            shotCooldown = shotCooldownStart
         if pressed[pygame.K_q]:
             spectator[0] -= 10
         if pressed[pygame.K_t]:
@@ -271,6 +299,13 @@ def threeD(pygame, dataArray):
             threeDExit = True
         perspectify(copy.deepcopy(leftRail), spectator, [255, 0, 0], "always")
         perspectify(copy.deepcopy(rightRail), spectator, [255, 0, 0], "always")
+        for bullet in inactiveBulletCubes:
+            cubeToPerspective(bullet, spectator)
+
+        # delete, then append active bullets to allCubes
+        allCubes = allCubes[0:3]
+        for cube in activeBulletCubes:
+            allCubes.append(cube[:])
 
         # 3d line distance pythagorean therom
         cubeDistances = []
