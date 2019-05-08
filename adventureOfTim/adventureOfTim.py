@@ -8,9 +8,10 @@ import random
 # import Enemy
 import sys
 sys.path.insert(0, './gameClasses')
+sys.path.insert(0, './adventureOfTim/gameClasses')
 from Enemy import Enemy
 from defsPygame1 import col_detect, platform_detect
-from platformer import platformer
+from platformer import platformer, deleteBottomSquares
 
 pygame.init()
 
@@ -46,7 +47,7 @@ def cubeCollision(cube1, cube2):
 def perspectify(inSquare, spectator, color, squareSide):
     displayString =  "pygame.draw.polygon(gameDisplay, " + str(color) + ", ("
     displayBool = False
-    pointArguments = 0;
+    pointArguments = 0
     for index, point in enumerate(inSquare):
         # sub nothing = point; sub1 is where z = 0; sub2 is spectator
         # (x - x1)/(x2 - x1) = (y - y1)/(y2 - y1) = (z - z1)/(z2 - z1) = c 
@@ -157,11 +158,11 @@ def threeD(pygame, dataArray):
     shotCooldownStart = 10
     shotCooldown = 0
     while not threeDExit:
-	for event in pygame.event.get():
-	    if event.type == pygame.QUIT:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
                 threeDExit = True
-	pressed = pygame.key.get_pressed()
-	gameDisplay.fill((100, 100, 100))
+        pressed = pygame.key.get_pressed()
+        gameDisplay.fill((100, 100, 100))
 
         # Components of perspective
         # 3d line math: https://brilliant.org/wiki/3d-coordinate-geometry-equation-of-a-line/
@@ -245,36 +246,36 @@ def threeD(pygame, dataArray):
                 playerCube[0] = playerStartPosition[0]
                 playerCube[1] = playerStartPosition[1]
                 playerCube[2] = playerStartPosition[2]
-	if pressed[pygame.K_j] and playerCube[2] < -50:
-            playerCube[2] += moveAmount
-            if cubeCollision(playerCube, enemy1Cube):
-                playerCube[0] = playerStartPosition[0]
-                playerCube[1] = playerStartPosition[1]
-                playerCube[2] = playerStartPosition[2]
-	if pressed[pygame.K_a] and (playerCube[0] >= 50):
-            playerCube[0] -= moveAmount
-            if cubeCollision(playerCube, enemy1Cube):
-                playerCube[0] = playerStartPosition[0]
-                playerCube[1] = playerStartPosition[1]
-                playerCube[2] = playerStartPosition[2]
-	if pressed[pygame.K_d] and (playerCube[0] <= 700):
-            playerCube[0] += moveAmount
-            if cubeCollision(playerCube, enemy1Cube):
-                playerCube[0] = playerStartPosition[0]
-                playerCube[1] = playerStartPosition[1]
-                playerCube[2] = playerStartPosition[2]
-	if pressed[pygame.K_w] and (playerCube[1] >= 0):
-            playerCube[1] -= moveAmount
-            if cubeCollision(playerCube, enemy1Cube):
-                playerCube[0] = playerStartPosition[0]
-                playerCube[1] = playerStartPosition[1]
-                playerCube[2] = playerStartPosition[2]
-	if pressed[pygame.K_s] and (playerCube[1] <= 700):
-            playerCube[1] += moveAmount
-            if cubeCollision(playerCube, enemy1Cube):
-                playerCube[0] = playerStartPosition[0]
-                playerCube[1] = playerStartPosition[1]
-                playerCube[2] = playerStartPosition[2]
+    if pressed[pygame.K_j] and playerCube[2] < -50:
+        playerCube[2] += moveAmount
+        if cubeCollision(playerCube, enemy1Cube):
+            playerCube[0] = playerStartPosition[0]
+            playerCube[1] = playerStartPosition[1]
+            playerCube[2] = playerStartPosition[2]
+    if pressed[pygame.K_a] and (playerCube[0] >= 50):
+        playerCube[0] -= moveAmount
+        if cubeCollision(playerCube, enemy1Cube):
+            playerCube[0] = playerStartPosition[0]
+            playerCube[1] = playerStartPosition[1]
+            playerCube[2] = playerStartPosition[2]
+    if pressed[pygame.K_d] and (playerCube[0] <= 700):
+        playerCube[0] += moveAmount
+        if cubeCollision(playerCube, enemy1Cube):
+            playerCube[0] = playerStartPosition[0]
+            playerCube[1] = playerStartPosition[1]
+            playerCube[2] = playerStartPosition[2]
+    if pressed[pygame.K_w] and (playerCube[1] >= 0):
+        playerCube[1] -= moveAmount
+        if cubeCollision(playerCube, enemy1Cube):
+            playerCube[0] = playerStartPosition[0]
+            playerCube[1] = playerStartPosition[1]
+            playerCube[2] = playerStartPosition[2]
+    if pressed[pygame.K_s] and (playerCube[1] <= 700):
+        playerCube[1] += moveAmount
+        if cubeCollision(playerCube, enemy1Cube):
+            playerCube[0] = playerStartPosition[0]
+            playerCube[1] = playerStartPosition[1]
+            playerCube[2] = playerStartPosition[2]
         if playerCube[2] <= -1000 or playerDead == True:
             threeDExit = True
         perspectify(copy.deepcopy(leftRail), spectator, [255, 0, 0], "always")
@@ -320,8 +321,8 @@ def threeD(pygame, dataArray):
         #pygame.draw.polygon(gameDisplay, [50, 0, 150], ((350, 700), (100, 50), (100, 100), (50, 100)))
         #pygame.draw.polygon(gameDisplay, [50, 0, 150], ((ppSquare[0][0], ppSquare[0][1]), (ppSquare[1][0], \
         #ppSquare[1][1]), (ppSquare[2][0], ppSquare[2][1]), (ppSquare[3][0], ppSquare[3][1])))
-	time.sleep(.01)
-	pygame.display.update()
+    time.sleep(.01)
+    pygame.display.update()
     score -= 10
     if score < 0:
         score = 0
@@ -354,63 +355,63 @@ pygame.display.set_caption('game_of_the_bloxx')
 gameExit = False
 
 while not gameExit:
-	for event in pygame.event.get():
-		if event.type == pygame.QUIT:
-			gameExit = True
-	gameDisplay.fill(black)
-        pygame.draw.rect(gameDisplay, pink, [bullet_pos[0], bullet_pos[1], bullet_pos[2], bullet_pos[3]]) 
-        pygame.draw.rect(gameDisplay, green, [enemy_pos[0], enemy_pos[1], enemy_pos[2], enemy_pos[3]])
-        pygame.draw.rect(gameDisplay, green, [enemy2_pos[0], enemy2_pos[1], enemy2_pos[2], enemy2_pos[3]])
-	pygame.draw.rect(gameDisplay, red, [position[0], position[1], position[2], position[3]])	
-	pygame.draw.rect(gameDisplay, white, [position[0] + 20, position[1], 10, 10])
-	pygame.draw.rect(gameDisplay, green, [position[0] + 10, position[1] - 30, 10, 20])
-	time.sleep(.01)
-	#time.sleep(.1)
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            gameExit = True
+    gameDisplay.fill(black)
+    pygame.draw.rect(gameDisplay, pink, [bullet_pos[0], bullet_pos[1], bullet_pos[2], bullet_pos[3]]) 
+    pygame.draw.rect(gameDisplay, green, [enemy_pos[0], enemy_pos[1], enemy_pos[2], enemy_pos[3]])
+    pygame.draw.rect(gameDisplay, green, [enemy2_pos[0], enemy2_pos[1], enemy2_pos[2], enemy2_pos[3]])
+    pygame.draw.rect(gameDisplay, red, [position[0], position[1], position[2], position[3]])    
+    pygame.draw.rect(gameDisplay, white, [position[0] + 20, position[1], 10, 10])
+    pygame.draw.rect(gameDisplay, green, [position[0] + 10, position[1] - 30, 10, 20])
+    time.sleep(.01)
+    #time.sleep(.1)
 
-        font = pygame.font.Font('freesansbold.ttf', 32)
-        text = font.render('score: ' + str(score), True, [100, 200, 255], [255, 200, 100])
-        gameDisplay.blit(text, (0,0))
+    font = pygame.font.Font('freesansbold.ttf', 32)
+    text = font.render('score: ' + str(score), True, [100, 200, 255], [255, 200, 100])
+    gameDisplay.blit(text, (0,0))
 
-	pressed = pygame.key.get_pressed()
-	if bullet_bool:
-		bullet_pos[1] = bullet_pos[1] - 10
-		bullet_time = bullet_time - 1
-		if bullet_time <= 0:
-			bullet_bool = False
-			bullet_time = 80
-	if pressed[pygame.K_SPACE] and bullet_bool == False:
-		bullet_bool = True
-		bullet_pos[1] = position[1] - 20
-		bullet_pos[0] = position[0] + 13
-	if pressed[pygame.K_b]:
+    pressed = pygame.key.get_pressed()
+    if bullet_bool:
+        bullet_pos[1] = bullet_pos[1] - 10
+        bullet_time = bullet_time - 1
+        if bullet_time <= 0:
+            bullet_bool = False
+            bullet_time = 80
+    if pressed[pygame.K_SPACE] and bullet_bool == False:
+        bullet_bool = True
+        bullet_pos[1] = position[1] - 20
+        bullet_pos[0] = position[0] + 13
+    if pressed[pygame.K_b]:
             score += 10
-	if pressed[pygame.K_w]:
-		position[1] = position[1] - playerSpeed
+    if pressed[pygame.K_w]:
+        position[1] = position[1] - playerSpeed
         if position[1] <= 30:
             position[1] = 30
-	if pressed[pygame.K_s]:
-		position[1] = position[1] + playerSpeed
+    if pressed[pygame.K_s]:
+        position[1] = position[1] + playerSpeed
         if position[1] >= 590:
             position[1] = 590
-	if pressed[pygame.K_a]:
-		position[0] = position[0] - playerSpeed
-	if position[0] <= 0:
-		position[0] = 0
-	if pressed[pygame.K_d]:
-		position[0] = position[0] + playerSpeed
-	if position[0] >= 770:
-		position[0] = 770
-        if col_detect(bullet_pos, enemy_pos):
-            #enemy_pos[0] = enemy_pos[0] + 100
-            #enemy_pos[1] = enemy_pos[1] + 100
-	    bullet_pos[1] = -2000
-            dataArray = platformer(pygame, [dataArray[0], score], gameDisplay)
-            score = dataArray[1]
-            if score < 0:
-                score = 0
-                dataArray[1] = 0
-        if col_detect(bullet_pos, enemy2_pos):
-	    bullet_pos[1] = -2000
-            dataArray = threeD(pygame, [dataArray[0], score])
-            score = dataArray[1]
-	pygame.display.update()
+    if pressed[pygame.K_a]:
+        position[0] = position[0] - playerSpeed
+    if position[0] <= 0:
+        position[0] = 0
+    if pressed[pygame.K_d]:
+        position[0] = position[0] + playerSpeed
+    if position[0] >= 770:
+        position[0] = 770
+    if col_detect(bullet_pos, enemy_pos):
+        #enemy_pos[0] = enemy_pos[0] + 100
+        #enemy_pos[1] = enemy_pos[1] + 100
+        bullet_pos[1] = -2000
+        dataArray = platformer(pygame, [dataArray[0], score], gameDisplay)
+        score = dataArray[1]
+        if score < 0:
+            score = 0
+            dataArray[1] = 0
+    if col_detect(bullet_pos, enemy2_pos):
+        bullet_pos[1] = -2000
+        dataArray = threeD(pygame, [dataArray[0], score])
+        score = dataArray[1]
+    pygame.display.update()
