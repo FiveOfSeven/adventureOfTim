@@ -1,4 +1,5 @@
 import time
+import random
 import pdb
 import pygame
 from defsPygame1 import col_detect, platform_detect
@@ -51,9 +52,11 @@ def platformer(pygame, dataArray, gameDisplay):
         elif level == 3:
             # delete level3Platforms that are past the bottom of the screen
             deleteBottomSquares(level3Platforms)
-            print level3Platforms, platformQuantity
+            print len(level3Platforms), platformQuantity
             if len(level3Platforms) < platformQuantity:
-                while (len(level3Platforms) > platformQuantity):
+                print 'adding a platform'
+                while (len(level3Platforms) < platformQuantity):
+                    print 'in the while loop'
                     level3Platforms.append([random.randint(0, 700), random.randint(-2000, -100), random.randint(20, 100), 10])
 
             if dataArray[0][1] < 200 and jumpTime > 0:
