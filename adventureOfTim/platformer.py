@@ -24,11 +24,13 @@ def platformer(pygame, dataArray, gameDisplay):
     jumpVelocity = 4
     platformVelocity = 4
     platformQuantity = 20
+    level3Food = []
+    level3FoodQuantity = 5
     level1Platforms = [[400, 500, 300, 10], [100, 450, 300, 10], [400, 400, 50, 10], [300, 350, 50, 10], [200, 300, 50, 10], [100, 250, 50, 10], \
             [0, 200, 50, 10], [100, 150, 50, 10], [200, 100, 50, 10], [300, 50, 50, 10]]
     level2Platforms = [[400, 500, 300, 10], [500, 450, 10, 10], [400, 400, 10, 10], [300, 350, 10, 10], [200, 300, 10, 10], [100, 250, 10, 10], \
             [0, 200, 10, 10], [100, 150, 10, 10], [200, 100, 10, 10], [300, 50, 10, 10]]
-    level3Platforms = [[0, 500, 800, 10], [250, 400, 100, 10], [250, 300, 100, 10], [250, 200, 100, 10], [250, 100, 100, 10], [250, 0, 100, 10]]
+    level3Platforms = [[0, 500, 250, 10], [350, 500, 450, 10], [250, 400, 100, 10], [250, 300, 100, 10], [250, 200, 100, 10], [250, 100, 100, 10], [250, 0, 100, 10]]
     platforms_pos = [[400, 500, 300, 10], [100, 450, 300, 10], [400, 400, 50, 10], [300, 350, 50, 10], [200, 300, 50, 10], [100, 250, 50, 10], \
             [0, 200, 50, 10], [100, 150, 50, 10], [200, 100, 50, 10], [300, 50, 50, 10]]
     win_box = [500, 200, 20, 20]
@@ -59,15 +61,40 @@ def platformer(pygame, dataArray, gameDisplay):
                     print 'in the while loop'
                     level3Platforms.append([random.randint(0, 700), random.randint(-2000, -100), random.randint(20, 100), 10])
 
+            # delete level3Platforms that are past the bottom of the screen
+            deleteBottomSquares(level3Food)
+            if len(level3Food) < level3FoodQuantity:
+                while (len(level3Food) < platformQuantity):
+                    level3Food.append([random.randint(0, 700), random.randint(-2000, -100), 10, 10])
+
+
             if dataArray[0][1] < 200 and jumpTime > 0:
                 #dataArray[0][1] += jumpTime
                 jumpVelocity = 0
                 for index, platform in enumerate(level3Platforms[:]):
                     level3Platforms[index][1] += platformVelocity
+                for index, food in enumerate(level3Food[:]):
+                    level3Food[index][1] += platformVelocity
             elif dataArray[0][1] >= 200 or jumpTime <= 0:
                 jumpVelocity = 4
+
+            # draw platforms and food
             for platform in level3Platforms:
                 pygame.draw.rect(gameDisplay, (200, 150, 0), platform)
+            for food in level3Food:
+                pygame.draw.rect(gameDisplay, (100, 0, 0), food)
+
+            # able to eat food
+            foodIndex = 0
+            foodLength = len(level3Food)
+            while foodIndex < len(level3Food):
+                if col_detect(dataArray[0], level3Food[foodIndex]):
+                    level3Food.remove(level3Food[foodIndex])
+                    dataArray[1] += 3
+                    foodLength -= 1
+                    continue
+                foodIndex += 1
+
         if (level == 1) or (level == 2):
             for plat_pos in platforms_pos: # draw platforms
                 pygame.draw.rect(gameDisplay, (255, 100, 200), [plat_pos[0], plat_pos[1], plat_pos[2], plat_pos[3]])

@@ -31,16 +31,18 @@ bullet_time = 80
 enemy_pos = [400, 100, 30, 30]
 enemy2_pos = [200, 100, 30, 30]
 gameDisplay = pygame.display.set_mode((800,600))
-pygame.display.set_caption('game_of_the_bloxx')
+pygame.display.set_caption('Adventure of Tim')
 playerSpeed = 5
 score = 0
 dataArray = [position, score]
+# scoreRequirements: 0 = platformer;
+scoreRequirements = [50]
 
 
 
 dataArrayDisplay = pygame.display.set_mode((800,600))
 # Start of the main game
-pygame.display.set_caption('game_of_the_bloxx')
+pygame.display.set_caption('Adventure of Tim')
 gameExit = False
 
 while not gameExit:
@@ -58,8 +60,11 @@ while not gameExit:
     #time.sleep(.1)
 
     font = pygame.font.Font('freesansbold.ttf', 32)
+    smallFont = pygame.font.Font('freesansbold.ttf', 12)
     text = font.render('score: ' + str(score), True, [100, 200, 255], [255, 200, 100])
+    platformerScore = smallFont.render(str(scoreRequirements[0]), True, [0, 0, 0], [255, 255, 255])
     gameDisplay.blit(text, (0,0))
+    gameDisplay.blit(platformerScore, (enemy_pos[0], enemy_pos[1]))
 
     pressed = pygame.key.get_pressed()
     if bullet_bool:
@@ -74,6 +79,8 @@ while not gameExit:
         bullet_pos[0] = position[0] + 13
     if pressed[pygame.K_b]:
             score += 10
+    if pressed[pygame.K_v]:
+            score = 0
     if pressed[pygame.K_w]:
         position[1] = position[1] - playerSpeed
         if position[1] <= 30:
@@ -90,15 +97,15 @@ while not gameExit:
         position[0] = position[0] + playerSpeed
     if position[0] >= 770:
         position[0] = 770
-    if col_detect(bullet_pos, enemy_pos):
-        #enemy_pos[0] = enemy_pos[0] + 100
-        #enemy_pos[1] = enemy_pos[1] + 100
+    # go to platformer level
+    if score >= scoreRequirements[0] and col_detect(bullet_pos, enemy_pos):
         bullet_pos[1] = -2000
         dataArray = platformer(pygame, [dataArray[0], score], gameDisplay)
         score = dataArray[1]
         if score < 0:
             score = 0
             dataArray[1] = 0
+    # go to threeD level
     if col_detect(bullet_pos, enemy2_pos):
         bullet_pos[1] = -2000
         dataArray = threeD(pygame, [dataArray[0], score], gameDisplay)

@@ -2,6 +2,7 @@ import pygame
 import copy
 import math
 import time
+import random
 
 def cubeCollision(cube1, cube2):
     xmin1 = cube1[0]
@@ -18,18 +19,18 @@ def cubeCollision(cube1, cube2):
     zmax2 = cube2[2] + cube2[5]
     collision = False
     if (xmin2 >= xmin1 and xmin2 <= xmax1 \
-            or xmax2 >= xmin1 and xmax2 <= xmax1 \
-            or xmin1 >= xmin2 and xmin1 <= xmax2 \
-            or xmax1 >= xmin2 and xmax1 <= xmax2) \
-            and (ymin2 >= ymin1 and ymin2 <= ymax1 \
-            or ymax2 >= ymin1 and ymax2 <= ymax1 \
-            or ymin1 >= ymin2 and ymin1 <= ymax2 \
-            or ymax1 >= ymin2 and ymax1 <= ymax2) \
-            and (zmin2 >= zmin1 and zmin2 <= zmax1 \
-            or zmax2 >= zmin1 and zmax2 <= zmax1 \
-            or zmin1 >= zmin2 and zmin1 <= zmax2 \
-            or zmax1 >= zmin2 and zmax1 <= zmax2):
-                collision = True
+        or xmax2 >= xmin1 and xmax2 <= xmax1 \
+        or xmin1 >= xmin2 and xmin1 <= xmax2 \
+        or xmax1 >= xmin2 and xmax1 <= xmax2) \
+        and (ymin2 >= ymin1 and ymin2 <= ymax1 \
+        or ymax2 >= ymin1 and ymax2 <= ymax1 \
+        or ymin1 >= ymin2 and ymin1 <= ymax2 \
+        or ymax1 >= ymin2 and ymax1 <= ymax2) \
+        and (zmin2 >= zmin1 and zmin2 <= zmax1 \
+        or zmax2 >= zmin1 and zmax2 <= zmax1 \
+        or zmin1 >= zmin2 and zmin1 <= zmax2 \
+        or zmax1 >= zmin2 and zmax1 <= zmax2):
+            collision = True
     return collision
 
 def perspectify(inSquare, spectator, color, squareSide, gameDisplay):
