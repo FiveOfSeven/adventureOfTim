@@ -1,6 +1,8 @@
-make it so you can move around in adventureOfTim.py
-make it so you can buy a move in threeD to turn all the active bullets into bombs
-hide easter eggs in main level that give score points
-make text for the levels with the useful keys
+fix the threeD bug where the enemy cubes will randomly drop to 0 cubes
+make it so there are enemies in the adventureOfTim main level
+hide easter eggs in main level that give score points. when you find it, it respawns in a random location. most of the time 10, sometimes 20, 50, 100
 create a store level
-
+make it so you can buy a move for threeD to turn all the active bullets into bombs
+make text for the levels with the useful keyboard keys
+make flappy birds with guns level
+make an adventureOFTim level where pressing a button will sometimes give points, and sometimes spawn a ton of monsters

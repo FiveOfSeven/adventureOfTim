@@ -8,7 +8,9 @@ def cubeCollision(cube1, cube2):
     print 'cube1, cube2', cube1, cube2
     subCollision = False
     collision = False
-    if isinstance(cube2[0], (list,)):
+    if not cube2: # empty list
+        pass
+    elif isinstance(cube2, (list,)) and isinstance(cube2[0], (list,)):
         for subCube in cube2:
             if cubeCollision(cube1, subCube):
                 subCollision = True

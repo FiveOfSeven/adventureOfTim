@@ -1,6 +1,12 @@
 import pdb
 
 def col_detect(squareA, squareB):
+    collision = False
+    subCollision = False
+    if isinstance(squareB, (list,)) and isinstance(squareB[0], (list,)):
+        for square in squareB:
+            if col_detect(squareA, square):
+                subCollision = True
     xminA = squareA[0]
     xminB = squareB[0]
     yminA = squareA[1]
@@ -9,19 +15,17 @@ def col_detect(squareA, squareB):
     xmaxB = squareB[0] + squareB[2]
     ymaxA = squareA[1] + squareA[3]
     ymaxB = squareB[1] + squareB[3]
-    return_value = False
-    #print (xminA, xmaxA, yminA, ymaxA, xminB, xmaxB, yminB, ymaxB)
-    if (xminB >= xminA and xminB <= xmaxA) or (xmaxB >= xminA and xmaxB <= xmaxA):
-        #print("1")
-        if yminB >= yminA and yminB <= ymaxA or ymaxB >= yminA and ymaxB <= ymaxA:
-            #print("2")
-            return_value = True
-    if xminA >= xminB and xminA <= xmaxB or xmaxA >= xminB and xmaxA <= xmaxB:
-        #print("3")
-        if yminA >= yminB and yminA <= ymaxB or ymaxA >= yminB and ymaxA <= ymaxB:
-            #print("4")
-            return_value = True
-    return return_value 
+    if (xminB >= xminA and xminB <= xmaxA \
+        or xmaxB >= xminA and xmaxB <= xmaxA) \
+        and (yminB >= yminA and yminB <= ymaxA \
+        or ymaxB >= yminA and ymaxB <= ymaxA):
+            collision = True
+    if (xminA >= xminB and xminA <= xmaxB \
+        or xmaxA >= xminB and xmaxA <= xmaxB) \
+        and (yminA >= yminB and yminA <= ymaxB \
+        or ymaxA >= yminB and ymaxA <= ymaxB):
+            collision = True
+    return collision or subCollision
 
 def platform_detect(squareA, squareArrayB):
     #squareA is the player, squareB is the platform
