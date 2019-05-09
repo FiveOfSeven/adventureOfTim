@@ -5,33 +5,40 @@ import time
 import random
 
 def cubeCollision(cube1, cube2):
-    xmin1 = cube1[0]
-    xmax1 = cube1[0] + cube1[3]
-    ymin1 = cube1[1]
-    ymax1 = cube1[1] + cube1[4]
-    zmin1 = cube1[2] 
-    zmax1 = cube1[2] + cube1[5]
-    xmin2 = cube2[0]
-    xmax2 = cube2[0] + cube2[3]
-    ymin2 = cube2[1]
-    ymax2 = cube2[1] + cube2[4]
-    zmin2 = cube2[2] 
-    zmax2 = cube2[2] + cube2[5]
+    print 'cube1, cube2', cube1, cube2
+    subCollision = False
     collision = False
-    if (xmin2 >= xmin1 and xmin2 <= xmax1 \
-        or xmax2 >= xmin1 and xmax2 <= xmax1 \
-        or xmin1 >= xmin2 and xmin1 <= xmax2 \
-        or xmax1 >= xmin2 and xmax1 <= xmax2) \
-        and (ymin2 >= ymin1 and ymin2 <= ymax1 \
-        or ymax2 >= ymin1 and ymax2 <= ymax1 \
-        or ymin1 >= ymin2 and ymin1 <= ymax2 \
-        or ymax1 >= ymin2 and ymax1 <= ymax2) \
-        and (zmin2 >= zmin1 and zmin2 <= zmax1 \
-        or zmax2 >= zmin1 and zmax2 <= zmax1 \
-        or zmin1 >= zmin2 and zmin1 <= zmax2 \
-        or zmax1 >= zmin2 and zmax1 <= zmax2):
-            collision = True
-    return collision
+    if isinstance(cube2[0], (list,)):
+        for subCube in cube2:
+            if cubeCollision(cube1, subCube):
+                subCollision = True
+    else:
+        xmin1 = cube1[0]
+        xmax1 = cube1[0] + cube1[3]
+        ymin1 = cube1[1]
+        ymax1 = cube1[1] + cube1[4]
+        zmin1 = cube1[2] 
+        zmax1 = cube1[2] + cube1[5]
+        xmin2 = cube2[0]
+        xmax2 = cube2[0] + cube2[3]
+        ymin2 = cube2[1]
+        ymax2 = cube2[1] + cube2[4]
+        zmin2 = cube2[2] 
+        zmax2 = cube2[2] + cube2[5]
+        if (xmin2 >= xmin1 and xmin2 <= xmax1 \
+            or xmax2 >= xmin1 and xmax2 <= xmax1 \
+            or xmin1 >= xmin2 and xmin1 <= xmax2 \
+            or xmax1 >= xmin2 and xmax1 <= xmax2) \
+            and (ymin2 >= ymin1 and ymin2 <= ymax1 \
+            or ymax2 >= ymin1 and ymax2 <= ymax1 \
+            or ymin1 >= ymin2 and ymin1 <= ymax2 \
+            or ymax1 >= ymin2 and ymax1 <= ymax2) \
+            and (zmin2 >= zmin1 and zmin2 <= zmax1 \
+            or zmax2 >= zmin1 and zmax2 <= zmax1 \
+            or zmin1 >= zmin2 and zmin1 <= zmax2 \
+            or zmax1 >= zmin2 and zmax1 <= zmax2):
+                collision = True
+    return collision or subCollision
 
 def perspectify(inSquare, spectator, color, squareSide, gameDisplay):
     displayString =  "pygame.draw.polygon(gameDisplay, " + str(color) + ", ("
@@ -109,10 +116,11 @@ def updateBullets(inactiveBulletCubes, activeBulletCubes, score, bulletStartPosi
     # 6.1 calculater Nearest Fibonacci Number <= n calculator
     # i = fib index; n = fib number (score)
     # i = (log(n) + (log(5) / 2)) / (log(1.618034)
+    fibI = -1
     if score <= 0:
         fibI = 1
     else:
-        fibI = math.floor((math.log(score) + (math.log(5) / 2)) / (math.log(1.618034)) + 0.1)
+        fibI = math.floor(((math.log(score) + (math.log(5) / 2)) / (math.log(1.618034)) + 0.1))
         fibI = fibI / 3
     totalBullets = len(inactiveBulletCubes) + len(activeBulletCubes)
     if (totalBullets < fibI):
@@ -120,7 +128,23 @@ def updateBullets(inactiveBulletCubes, activeBulletCubes, score, bulletStartPosi
         inactiveBulletCubes[-1][0] = bulletStartPosition[:][0] + (len(inactiveBulletCubes) * 20)
         #time.sleep(5)
         #add a bullet to inactiveBulletCubes
+
+def updateEnemy(enemyCubes, enemyQuantity, score, enemyCube):
+    fibI = 1
+    enemyQuantity = len(enemyCubes)
+    if score > 25:
+        score -= 25
+    if score <= 0:
+        fibI = 1
+    else:
+        fibI = math.floor(((math.log(score) + (math.log(5) / 2)) / (math.log(1.618034)) + 0.1) / 4)
+    if enemyQuantity < fibI:
+        enemyCubes.append([random.randint(0,700), random.randint(0,500), random.randint(-1000, -500), enemyCube[3], enemyCube[4], enemyCube[5]])
+    elif enemyQuantity > fibI:
+        del enemyCubes[-1]
+    return enemyQuantity
     
+
 
 #dataArray: position, score
 def threeD(pygame, dataArray, gameDisplay):
@@ -128,11 +152,13 @@ def threeD(pygame, dataArray, gameDisplay):
     spectator = [400, 250, 50]
     #square x, y, z, width, hight, depth; cube origin is at top left forward point
     playerCube = [325, 400, -75, 20, 20, 5]
-    enemy1Cube = [325, 400, -300, 100, 100, 50]
+    enemyCube = [325, 400, -300, 100, 100, 50]
+    enemyCubes = [enemyCube]
+    enemyQuantity = 1
     #square x, y, z, width, hight, depth, bulletIsActiveBool, airTime
     inactiveBulletCubes = []
     activeBulletCubes = []
-    allCubes = [playerCube, enemy1Cube]
+    allCubes = [playerCube]
     # 4 points of square
     ppSquare = [[350, 500, -10], [450, 500, -10], [450, 600, -10], [350, 600, -10]]
     leftRail = [[0, 400, 0], [0, 400, -3000], [0, 600, -3000], [0, 600, 0]]
@@ -160,7 +186,7 @@ def threeD(pygame, dataArray, gameDisplay):
         # x is the x value of dSquare, and x1 is the x value of spectator
         # Ax + By + Cz = D
         # two-point form:
-        # 3 dimensional line:
+        # 3 dimensional line
         # (x - x1)/(x2 - x1) = (y - y1)/(y2 - y1) = (z - z1)/(z2 - z1) = c 
 
         font = pygame.font.Font('freesansbold.ttf', 32)
@@ -168,23 +194,25 @@ def threeD(pygame, dataArray, gameDisplay):
         gameDisplay.blit(text, (0,0))
 
 
-        # add bullets
+        # add bullets and enemies
         if score >= 0:
             updateBullets(inactiveBulletCubes, activeBulletCubes, score, bulletStartPosition)
+            enemyQuantity = updateEnemy(enemyCubes, enemyQuantity, score, enemyCube)
             
 
 
         # enemy movement
-        if enemy1Cube[2] < -75:
-            enemy1Cube[2] += 1
-        else:
-            enemy1Cube[0] = random.randint(0,700)
-            enemy1Cube[1] = random.randint(0,500)
-            enemy1Cube[2] = random.randint(-1000,500)
-            score -= 10
-            if score < 0:
-                score = 0
-            #threeDExit = True
+        for cube in enemyCubes: 
+            if cube[2] < -75:
+                cube[2] += 1
+            else:
+                cube[0] = random.randint(0,700)
+                cube[1] = random.randint(0,500)
+                cube[2] = random.randint(-1000,500)
+                score -= 10
+                if score < 0:
+                    score = 0
+                #threeDExit = True
 
         # bullet movement
         for index, bullet in reversed(list(enumerate(activeBulletCubes[:]))):
@@ -192,11 +220,12 @@ def threeD(pygame, dataArray, gameDisplay):
             bullet[2] -= 5
             if bullet[6] > 200:
                 del activeBulletCubes[index]
-            if cubeCollision(bullet, enemy1Cube):
-                enemy1Cube[0] = random.randint(0,700)
-                enemy1Cube[1] = random.randint(0,500)
-                enemy1Cube[2] = random.randint(-1000,-300)
-                score += 1
+            for cube in enemyCubes:
+                if cubeCollision(bullet, cube):
+                    cube[0] = random.randint(0,700)
+                    cube[1] = random.randint(0,500)
+                    cube[2] = random.randint(-1000,-500)
+                    score += 1
 
 
         # shot cooldown
@@ -231,40 +260,41 @@ def threeD(pygame, dataArray, gameDisplay):
             threeDExit = True 
         if pressed[pygame.K_k] and ((spectator[1] + 0.3) <= ppSquare[0][1] or (spectator[1] - 0.3) >= ppSquare[0][1]):
             playerCube[2] -= moveAmount
-            if cubeCollision(playerCube, enemy1Cube):
+            if cubeCollision(playerCube, enemyCubes):
                 playerCube[0] = playerStartPosition[0]
                 playerCube[1] = playerStartPosition[1]
                 playerCube[2] = playerStartPosition[2]
         if pressed[pygame.K_j] and playerCube[2] < -50:
             playerCube[2] += moveAmount
-            if cubeCollision(playerCube, enemy1Cube):
+            if cubeCollision(playerCube, enemyCubes):
                 playerCube[0] = playerStartPosition[0]
                 playerCube[1] = playerStartPosition[1]
                 playerCube[2] = playerStartPosition[2]
         if pressed[pygame.K_a] and (playerCube[0] >= 50):
             playerCube[0] -= moveAmount
-            if cubeCollision(playerCube, enemy1Cube):
+            if cubeCollision(playerCube, enemyCubes):
                 playerCube[0] = playerStartPosition[0]
                 playerCube[1] = playerStartPosition[1]
                 playerCube[2] = playerStartPosition[2]
         if pressed[pygame.K_d] and (playerCube[0] <= 700):
             playerCube[0] += moveAmount
-            if cubeCollision(playerCube, enemy1Cube):
+            if cubeCollision(playerCube, enemyCubes):
                 playerCube[0] = playerStartPosition[0]
                 playerCube[1] = playerStartPosition[1]
                 playerCube[2] = playerStartPosition[2]
         if pressed[pygame.K_w] and (playerCube[1] >= 0):
             playerCube[1] -= moveAmount
-            if cubeCollision(playerCube, enemy1Cube):
+            if cubeCollision(playerCube, enemyCubes):
                 playerCube[0] = playerStartPosition[0]
                 playerCube[1] = playerStartPosition[1]
                 playerCube[2] = playerStartPosition[2]
         if pressed[pygame.K_s] and (playerCube[1] <= 700):
             playerCube[1] += moveAmount
-            if cubeCollision(playerCube, enemy1Cube):
+            if cubeCollision(playerCube, enemyCubes):
                 playerCube[0] = playerStartPosition[0]
                 playerCube[1] = playerStartPosition[1]
                 playerCube[2] = playerStartPosition[2]
+        print playerCube
         if playerCube[2] <= -1000 or playerDead == True:
             threeDExit = True
         perspectify(copy.deepcopy(leftRail), spectator, [255, 0, 0], "always", gameDisplay)
@@ -272,9 +302,11 @@ def threeD(pygame, dataArray, gameDisplay):
         for bullet in inactiveBulletCubes:
             cubeToPerspective(bullet, spectator, gameDisplay)
 
-        # delete, then append active bullets to allCubes
-        allCubes = allCubes[0:2]
+        # delete, then append active bullets and enemyCubes to allCubes. the player cube is in position 0
+        allCubes = allCubes[0:1]
         for cube in activeBulletCubes:
+            allCubes.append(cube[:])
+        for cube in enemyCubes:
             allCubes.append(cube[:])
 
         # 3d line distance pythagorean therom
@@ -304,7 +336,7 @@ def threeD(pygame, dataArray, gameDisplay):
             cubeToPerspective(allCubes[index], spectator, gameDisplay)
 
 
-        #cubeToPerspective(enemy1Cube, spectator, gameDisplay)
+        #cubeToPerspective(enemyCubes, spectator, gameDisplay)
         #cubeToPerspective(playerCube, spectator, gameDisplay)
 
         #pygame.draw.polygon(gameDisplay, [50, 0, 150], ((350, 700), (100, 50), (100, 100), (50, 100)))
