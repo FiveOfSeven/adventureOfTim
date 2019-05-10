@@ -199,7 +199,9 @@ while not gameExit:
     # go to platformer level
     if score >= scoreRequirements[0] and col_detect(bullet_pos, enemy_pos):
         bullet_pos[1] = -2000
+        tempPosition = dataArray[0][:]
         dataArray = platformer(pygame, [dataArray[0], score], gameDisplay)
+        dataArray[0] = tempPosition
         score = dataArray[1]
         if score < 0:
             score = 0

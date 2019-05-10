@@ -133,18 +133,23 @@ def updateBullets(inactiveBulletCubes, activeBulletCubes, score, bulletStartPosi
 
 def updateEnemy(enemyCubes, enemyQuantity, score, enemyCube):
     fibI = 1
-    enemyQuantity = len(enemyCubes)
-    if score > 25:
-        score -= 25
-    if score <= 0:
-        fibI = 1
+    #enemyQuantity = len(enemyCubes)
+    print 'len(enemyCubes), fibI', len(enemyCubes), fibI
+    if score < 50:
+        fibI = 0.5
+    elif score < 100:
+        fibI = 1.5
     else:
-        fibI = math.floor(((math.log(score) + (math.log(5) / 2)) / (math.log(1.618034)) + 0.1) / 4)
-    if enemyQuantity < fibI:
+        fibI = math.floor(((math.log(score) + (math.log(5) / 2)) / (math.log(1.618034)) + 0.1))
+        fibI = fibI / 5
+    print len(enemyCubes) <= fibI
+    #enemyQuantity = len(enemyCubes)
+    if len(enemyCubes) <= fibI:
         enemyCubes.append([random.randint(0,700), random.randint(0,500), random.randint(-1000, -500), enemyCube[3], enemyCube[4], enemyCube[5]])
-    elif enemyQuantity > fibI:
-        del enemyCubes[-1]
-    return enemyQuantity
+    elif len(enemyCubes) > fibI + 1:
+        pass
+        #del enemyCubes[-1]
+    return len(enemyCubes)
     
 
 
@@ -204,13 +209,14 @@ def threeD(pygame, dataArray, gameDisplay):
 
 
         # enemy movement
-        for cube in enemyCubes: 
+        for index, cube in reversed(list(enumerate(enemyCubes))): 
             if cube[2] < -75:
                 cube[2] += 1
             else:
-                cube[0] = random.randint(0,700)
-                cube[1] = random.randint(0,500)
-                cube[2] = random.randint(-1000,500)
+                del enemyCubes[index]
+                #cube[0] = random.randint(0,700)
+                #cube[1] = random.randint(0,500)
+                #cube[2] = random.randint(-1000,500)
                 score -= 10
                 if score < 0:
                     score = 0

@@ -1,4 +1,3 @@
-fix the threeD bug where the enemy cubes will randomly drop to 0 cubes
 make it so there are enemies in the adventureOfTim main level
 hide easter eggs in main level that give score points. when you find it, it respawns in a random location. most of the time 10, sometimes 20, 50, 100
 create a store level
@@ -6,3 +5,5 @@ make it so you can buy a move for threeD to turn all the active bullets into bom
 make text for the levels with the useful keyboard keys
 make flappy birds with guns level
 make an adventureOFTim level where pressing a button will sometimes give points, and sometimes spawn a ton of monsters
+make a pokemon game that has different harder levels that will randomly show up throught the game. the pokemon is kept through each new level, and new ones can be caught
+make doors to other places in the main game that can only be opened by shooting them after having enough score points
