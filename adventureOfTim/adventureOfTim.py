@@ -32,7 +32,10 @@ bullet_time = 80
 bulletVector = [0, -10]
 enemy_pos = [400, 100, 30, 30]
 enemy2_pos = [200, 100, 30, 30]
-wallCubes = [[800, 800, 50, 80], [200, 200, 20, 20], [0, 0, 1000, 10], [0, 1000, 1000, 10], [0, 0, 10, 1000], [1000, 0, 10, 2000]]
+#wallCubes = [[800, 800, 50, 80], [200, 200, 20, 20], [0, 0, 1000, 10], [0, 1000, 1000, 10], [0, 0, 10, 1000], [1000, 0, 10, 2000]]
+wallCubes = [[800, 800, 50, 80], [200, 200, 20, 20], [0, 0, 1000, 10], \
+    [0, 1000, 590, 10], [640, 1000, 360, 10], [0, 0, 10, 1000], \
+    [1000, 0, 10, 1010]]
 landCubes = [enemy_pos, enemy2_pos]
 landCubesStaticCount = 2 # enemy_pos and enemy2_pos should not be deleted
 gameDisplay = pygame.display.set_mode((800,600))
@@ -141,7 +144,7 @@ while not gameExit:
         elif position[1] <= 200:
             position[1] = 200
             for cube in landCubes:
-                cube[1] += playerSpeed
+                cube[1] = ((cube[1] + playerSpeed + 1000) % 3000) - 1000
         else:
             position[1] = position[1] - playerSpeed
             if not bullet_bool:
@@ -157,7 +160,7 @@ while not gameExit:
         elif position[1] >= 400:
             position[1] = 400
             for cube in landCubes:
-                cube[1] -= playerSpeed
+                cube[1] = ((cube[1] - playerSpeed + 1000) % 3000) - 1000
         else:
             position[1] = position[1] + playerSpeed
             if not bullet_bool:
@@ -173,7 +176,7 @@ while not gameExit:
         elif position[0] <= 200:
             position[0] = 200
             for cube in landCubes:
-                cube[0] += playerSpeed
+                cube[0] = ((cube[0] + playerSpeed + 1000) % 3000) - 1000
         else:
             position[0] = position[0] - playerSpeed
             if not bullet_bool:
@@ -189,7 +192,7 @@ while not gameExit:
         elif position[0] >= 600:
             position[0] = 600
             for cube in landCubes:
-                cube[0] -= playerSpeed
+                cube[0] = ((cube[0] - playerSpeed + 1000) % 3000) - 1000
         else:
             position[0] = position[0] + playerSpeed
             if not bullet_bool:
