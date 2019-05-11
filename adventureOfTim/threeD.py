@@ -217,9 +217,10 @@ def threeD(pygame, dataArray, gameDisplay):
                 #cube[0] = random.randint(0,700)
                 #cube[1] = random.randint(0,500)
                 #cube[2] = random.randint(-1000,500)
-                score -= 10
-                if score < 0:
-                    score = 0
+                if score < 200:
+                    score -= 1
+                else:
+                    score -= 10
                 #threeDExit = True
 
         # bullet movement
