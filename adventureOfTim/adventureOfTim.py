@@ -24,20 +24,31 @@ black = (0,0,0)
 red = (255,0,0)
 green = (0, 255, 0)
 yellow = (255, 255, 0)
+darkBrown = (50, 25, 0)
+darkGreen = (25, 50, 0)
 position = [400, 300, 20, 20]
 userInput = "no input"
 bullet_pos = [position[0] + 10, position[1] - 2000, 5, 10]
 bullet_bool = False
 bullet_time = 80
 bulletVector = [0, -10]
-enemy_pos = [400, 100, 30, 30]
-enemy2_pos = [200, 100, 30, 30]
+level1 = [400, 100, 30, 30]
+level2 = [200, 100, 30, 30]
+worldPosition = [0, 0]
+backgroundCubes = []
+for x in range(1, 6):
+    for y in range(1, 6):
+        backgroundCubes.append([worldPosition[0] + (x * 200), worldPosition[1] + (y * 200), 100, 100])
+        backgroundCubes.append([worldPosition[0] + 100 + (x * 200), worldPosition[1] + 100 + (y * 200), 100, 100])
+        backgroundCubes.append([worldPosition[0] + 100 + (x * 200), worldPosition[1] + (y * 200), 100, 100])
+        backgroundCubes.append([worldPosition[0] + (x * 200), worldPosition[0] + 100 + (y * 200), 100, 100])
+
 #wallCubes = [[800, 800, 50, 80], [200, 200, 20, 20], [0, 0, 1000, 10], [0, 1000, 1000, 10], [0, 0, 10, 1000], [1000, 0, 10, 2000]]
 wallCubes = [[800, 800, 50, 80], [200, 200, 20, 20], [0, 0, 1000, 10], \
-    [0, 1000, 590, 10], [640, 1000, 360, 10], [0, 0, 10, 1000], \
+    [0, 1000, 590, 10], [640, 1000, 370, 10], [0, 0, 10, 1000], \
     [1000, 0, 10, 1010]]
-landCubes = [enemy_pos, enemy2_pos]
-landCubesStaticCount = 2 # enemy_pos and enemy2_pos should not be deleted
+landCubes = [level1, level2]
+landCubesStaticCount = 2 # level1 and level2 should not be deleted
 gameDisplay = pygame.display.set_mode((800,600))
 pygame.display.set_caption('Adventure of Tim')
 playerSpeed = 3
@@ -60,9 +71,18 @@ while not gameExit:
         if event.type == pygame.QUIT:
             gameExit = True
     gameDisplay.fill(black)
-    pygame.draw.rect(gameDisplay, green, [enemy_pos[0], enemy_pos[1], enemy_pos[2], enemy_pos[3]])
-    pygame.draw.rect(gameDisplay, green, [enemy2_pos[0], enemy2_pos[1], enemy2_pos[2], enemy2_pos[3]])
+    # background tiles
+    for cube in backgroundCubes:
+        pygame.draw.rect(gameDisplay, darkBrown, [cube[0] % 1000, cube[1] % 1000, 100, 100])
+        pygame.draw.rect(gameDisplay, darkBrown, [(cube[0] + 100) % 1000, (worldPosition[1] + 100) % 1000, 100, 100])
+        pygame.draw.rect(gameDisplay, darkGreen, [(cube[0] + 100) % 1000, cube[1] % 1000, 100, 100])
+        pygame.draw.rect(gameDisplay, darkGreen, [cube[0] % 1000, (cube[1] + 100) % 1000, 100, 100])
+
+    pygame.draw.rect(gameDisplay, green, [level1[0], level1[1], level1[2], level1[3]])
+    pygame.draw.rect(gameDisplay, green, [level2[0], level2[1], level2[2], level2[3]])
     pygame.draw.rect(gameDisplay, red, [position[0], position[1], position[2], position[3]])    
+
+    # player animations
     if moveDirection == 'w':
         pygame.draw.rect(gameDisplay, (204, 102, 0), [position[0] + 2, position[1] - 15, 5, 15])
         pygame.draw.rect(gameDisplay, (204, 102, 0), [position[0] + 13, position[1] - 15, 5, 15])
@@ -93,7 +113,7 @@ while not gameExit:
     text = font.render('score: ' + str(score), True, [100, 200, 255], [255, 200, 100])
     platformerScore = smallFont.render(str(scoreRequirements[0]), True, [0, 0, 0], [255, 255, 255])
     gameDisplay.blit(text, (0,0))
-    gameDisplay.blit(platformerScore, (enemy_pos[0], enemy_pos[1]))
+    gameDisplay.blit(platformerScore, (level1[0], level1[1]))
 
     pressed = pygame.key.get_pressed()
     if bullet_bool:
@@ -131,10 +151,13 @@ while not gameExit:
             bullet_pos[0] = position[0] + 20
             bullet_pos[1] = position[1] + 8
             bulletVector = [10, 0]
-    if pressed[pygame.K_b]:
             score += 10
     if pressed[pygame.K_v]:
             score = 0
+    if pressed[pygame.K_b]:
+            score += 10
+    
+    # playerCube, landCube, and bullet Cube movements
     if pressed[pygame.K_w]:
         moveDirection = 'w'
         newPosition = position[:]
@@ -143,6 +166,7 @@ while not gameExit:
             pass
         elif position[1] <= 200:
             position[1] = 200
+            worldPosition[1] += playerSpeed
             for cube in landCubes:
                 cube[1] = ((cube[1] + playerSpeed + 1000) % 3000) - 1000
         else:
@@ -159,6 +183,7 @@ while not gameExit:
             pass
         elif position[1] >= 400:
             position[1] = 400
+            worldPosition[1] -= playerSpeed
             for cube in landCubes:
                 cube[1] = ((cube[1] - playerSpeed + 1000) % 3000) - 1000
         else:
@@ -167,7 +192,7 @@ while not gameExit:
                 bullet_pos[1] = bullet_pos[1] + playerSpeed
                 bullet_pos[2] = 10
                 bullet_pos[3] = 5
-    if pressed[pygame.K_a]:
+    if pressed[pygame.K_a]: 
         moveDirection = 'a'
         newPosition = position[:]
         newPosition[0] -= playerSpeed
@@ -175,6 +200,7 @@ while not gameExit:
             pass
         elif position[0] <= 200:
             position[0] = 200
+            worldPosition[0] += playerSpeed
             for cube in landCubes:
                 cube[0] = ((cube[0] + playerSpeed + 1000) % 3000) - 1000
         else:
@@ -191,6 +217,9 @@ while not gameExit:
             pass
         elif position[0] >= 600:
             position[0] = 600
+            worldPosition[0] -= playerSpeed
+            for cube in backgroundCubes:
+                cube[0] = ((cube[0] - playerSpeed + 1000) % 3000) - 1000
             for cube in landCubes:
                 cube[0] = ((cube[0] - playerSpeed + 1000) % 3000) - 1000
         else:
@@ -200,7 +229,7 @@ while not gameExit:
                 bullet_pos[2] = 10
                 bullet_pos[3] = 5
     # go to platformer level
-    if score >= scoreRequirements[0] and col_detect(bullet_pos, enemy_pos):
+    if score >= scoreRequirements[0] and col_detect(bullet_pos, level1):
         bullet_pos[1] = -2000
         tempPosition = dataArray[0][:]
         dataArray = platformer(pygame, [dataArray[0], score], gameDisplay)
@@ -210,7 +239,7 @@ while not gameExit:
             score = 0
             dataArray[1] = 0
     # go to threeD level
-    if col_detect(bullet_pos, enemy2_pos):
+    if col_detect(bullet_pos, level2):
         bullet_pos[1] = -2000
         dataArray = threeD(pygame, [dataArray[0], score], gameDisplay)
         score = dataArray[1]

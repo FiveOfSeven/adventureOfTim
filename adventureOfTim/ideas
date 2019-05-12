@@ -7,3 +7,4 @@ make flappy birds with guns level
 make an adventureOFTim level where pressing a button will sometimes give points, and sometimes spawn a ton of monsters
 make a pokemon game that has different harder levels that will randomly show up throught the game. the pokemon is kept through each new level, and new ones can be caught
 make doors to other places in the main game that can only be opened by shooting them after having enough score points
+make a scrolling level with sublevels that will spawn based on player position. if palyer goes past modulus 1000, add the next subarray of platforms.

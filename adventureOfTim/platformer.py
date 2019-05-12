@@ -140,8 +140,11 @@ def platformer(pygame, dataArray, gameDisplay):
             dataArray[0][1] += gravityVelocity
         time.sleep(.01)
         pygame.display.update()
-    dataArray[1] -= 10
     if dataArray[1] < 0:
         dataArray[1] = 0
+    elif dataArray[1] < 300:
+        dataArray[1] -= 1
+    else:
+        dataArray[1] -= 10
     return dataArray
 

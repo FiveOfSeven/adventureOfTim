@@ -221,6 +221,8 @@ def threeD(pygame, dataArray, gameDisplay):
                     score -= 1
                 else:
                     score -= 10
+                if score < 0:
+                    score = 0
                 #threeDExit = True
 
         # bullet movement
