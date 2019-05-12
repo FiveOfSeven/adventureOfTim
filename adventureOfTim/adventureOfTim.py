@@ -36,12 +36,6 @@ level1 = [400, 100, 30, 30]
 level2 = [200, 100, 30, 30]
 worldPosition = [0, 0]
 backgroundCubes = []
-for x in range(1, 2):
-    for y in range(1, 2):
-        backgroundCubes.append([worldPosition[0] + (x * 200), worldPosition[1] + (y * 200), 100, 100])
-        backgroundCubes.append([worldPosition[0] + 100 + (x * 200), worldPosition[1] + 100 + (y * 200), 100, 100])
-        backgroundCubes.append([worldPosition[0] + 100 + (x * 200), worldPosition[1] + (y * 200), 100, 100])
-        backgroundCubes.append([worldPosition[0] + (x * 200), worldPosition[0] + 100 + (y * 200), 100, 100])
 
 #wallCubes = [[800, 800, 50, 80], [200, 200, 20, 20], [0, 0, 1000, 10], [0, 1000, 1000, 10], [0, 0, 10, 1000], [1000, 0, 10, 2000]]
 wallCubes = [[800, 800, 50, 80], [200, 200, 20, 20], [0, 0, 1000, 10], \
@@ -72,11 +66,22 @@ while not gameExit:
             gameExit = True
     gameDisplay.fill(black)
     # background tiles
+    print 'before cubes'
+    print worldPosition
+    backgroundCubes = []
+    for x in range(1, 2):
+        for y in range(1, 2):
+            #backgroundCubes.append([worldPosition[0] + (x * 200), worldPosition[1] + (y * 200), 100, 100])
+            #backgroundCubes.append([worldPosition[0] + 100 + (x * 200), worldPosition[1] + 100 + (y * 200), 100, 100])
+            backgroundCubes.append([worldPosition[0] + 100 + (x * 200), worldPosition[1] + (y * 200), 100, 100])
+            #backgroundCubes.append([worldPosition[0] + (x * 200), worldPosition[0] + 100 + (y * 200), 100, 100])
+    print 'backgroundCubes: ', backgroundCubes
     for cube in backgroundCubes:
-        pygame.draw.rect(gameDisplay, darkBrown, [worldPosition[0] % 1000, worldPosition[1] % 1000, 100, 100])
-        pygame.draw.rect(gameDisplay, darkBrown, [(worldPosition[0] + 100) % 1000, (worldPosition[1] + 100) % 1000, 100, 100])
-        pygame.draw.rect(gameDisplay, darkGreen, [(worldPosition[0] + 100) % 1000, worldPosition[1] % 1000, 100, 100])
-        pygame.draw.rect(gameDisplay, darkGreen, [worldPosition[0] % 1000, (worldPosition[1] + 100) % 1000, 100, 100])
+        print 'cube: ', cube
+        pygame.draw.rect(gameDisplay, darkBrown, [cube[0] % 1000, cube[1] % 1000, 100, 100])
+        pygame.draw.rect(gameDisplay, darkBrown, [(cube[0] + 100) % 1000, (cube[1] + 100) % 1000, 100, 100])
+        pygame.draw.rect(gameDisplay, darkGreen, [(cube[0] + 100) % 1000, cube[1] % 1000, 100, 100])
+        pygame.draw.rect(gameDisplay, darkGreen, [cube[0] % 1000, (cube[1] + 100) % 1000, 100, 100])
 
     pygame.draw.rect(gameDisplay, green, [level1[0], level1[1], level1[2], level1[3]])
     pygame.draw.rect(gameDisplay, green, [level2[0], level2[1], level2[2], level2[3]])
@@ -218,8 +223,8 @@ while not gameExit:
         elif position[0] >= 600:
             position[0] = 600
             worldPosition[0] -= playerSpeed
-            for cube in backgroundCubes:
-                cube[0] = ((cube[0] - playerSpeed + 1000) % 3000) - 1000
+            #for cube in backgroundCubes:
+            #    cube[0] = ((cube[0] - playerSpeed + 1000) % 3000) - 1000
             for cube in landCubes:
                 cube[0] = ((cube[0] - playerSpeed + 1000) % 3000) - 1000
         else:
