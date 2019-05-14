@@ -69,19 +69,19 @@ while not gameExit:
     print 'before cubes'
     print worldPosition
     backgroundCubes = []
-    for x in range(1, 2):
-        for y in range(1, 2):
-            #backgroundCubes.append([worldPosition[0] + (x * 200), worldPosition[1] + (y * 200), 100, 100])
+    for x in range(1, 6):
+        for y in range(1, 6):
+            backgroundCubes.append([worldPosition[0] + (x * 200) - 400, worldPosition[1] + (y * 200) - 400, 100, 100])
             #backgroundCubes.append([worldPosition[0] + 100 + (x * 200), worldPosition[1] + 100 + (y * 200), 100, 100])
-            backgroundCubes.append([worldPosition[0] + 100 + (x * 200), worldPosition[1] + (y * 200), 100, 100])
+            #backgroundCubes.append([worldPosition[0] + 100 + (x * 200), worldPosition[1] + (y * 200), 100, 100])
             #backgroundCubes.append([worldPosition[0] + (x * 200), worldPosition[0] + 100 + (y * 200), 100, 100])
     print 'backgroundCubes: ', backgroundCubes
     for cube in backgroundCubes:
         print 'cube: ', cube
-        pygame.draw.rect(gameDisplay, darkBrown, [cube[0] % 1000, cube[1] % 1000, 100, 100])
-        pygame.draw.rect(gameDisplay, darkBrown, [(cube[0] + 100) % 1000, (cube[1] + 100) % 1000, 100, 100])
-        pygame.draw.rect(gameDisplay, darkGreen, [(cube[0] + 100) % 1000, cube[1] % 1000, 100, 100])
-        pygame.draw.rect(gameDisplay, darkGreen, [cube[0] % 1000, (cube[1] + 100) % 1000, 100, 100])
+        pygame.draw.rect(gameDisplay, darkBrown, [cube[0] % 1000 - 200, cube[1] % 1000 - 200, 100, 100])
+        pygame.draw.rect(gameDisplay, darkBrown, [(cube[0] + 100) % 1000 - 200, (cube[1] + 100) % 1000 - 200, 100, 100])
+        pygame.draw.rect(gameDisplay, darkGreen, [(cube[0] + 100) % 1000 - 200, cube[1] % 1000 - 200, 100, 100])
+        pygame.draw.rect(gameDisplay, darkGreen, [cube[0] % 1000 - 200, (cube[1] + 100) % 1000 - 200, 100, 100])
 
     pygame.draw.rect(gameDisplay, green, [level1[0], level1[1], level1[2], level1[3]])
     pygame.draw.rect(gameDisplay, green, [level2[0], level2[1], level2[2], level2[3]])
