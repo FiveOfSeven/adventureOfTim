@@ -16,7 +16,29 @@ from threeD import threeD
 
 pygame.init()
 
-
+def moveCloser(monster, position, magnitude):
+    # later you should take into account when the vector is 0
+    vector = [position[0] - monster[0], position[1] - monster[1]]
+    normalizedVector = [vector[0] * magnitude / vector[0], vector[1] * magnitude / vector[1]]
+    newMonster = [normalizedVector[0] + monster[0], normalizedVector[1] + monster[1]]
+    print 'vector', vector
+    print 'normalizedVector', normalizedVector
+    print 'newMonster', newMonster
+    return newMonster
+ 
+def isClose(square1, square2, maxDistance):
+    print 'in isClose'
+    # pythagorean theorum 
+    returnBool = False
+    x = square2[0] - square1[0]
+    y = square2[1] - square1[1]
+    realDistance = math.sqrt(x**2 + y**2)
+    print 'x', x
+    print 'y', y
+    print 'realDistance', realDistance
+    if realDistance <= maxDistance:
+        returnBool = True
+    return returnBool
  
 pink = (255, 100, 100)
 white = (255,255,255)
@@ -52,6 +74,8 @@ dataArray = [position, score]
 scoreRequirements = [50]
 # moveDirection wasd determines player gun direction
 moveDirection = 'w'
+# monsterCube
+monsters = [[500, -500, 50, 50], [2000, 500, 50, 50]]
 
 
 
@@ -66,26 +90,31 @@ while not gameExit:
             gameExit = True
     gameDisplay.fill(black)
     # background tiles
-    print 'before cubes'
-    print worldPosition
     backgroundCubes = []
     for x in range(1, 6):
-        for y in range(1, 6):
+        for y in range(1,6):
             backgroundCubes.append([worldPosition[0] + (x * 200) - 400, worldPosition[1] + (y * 200) - 400, 100, 100])
-            #backgroundCubes.append([worldPosition[0] + 100 + (x * 200), worldPosition[1] + 100 + (y * 200), 100, 100])
-            #backgroundCubes.append([worldPosition[0] + 100 + (x * 200), worldPosition[1] + (y * 200), 100, 100])
-            #backgroundCubes.append([worldPosition[0] + (x * 200), worldPosition[0] + 100 + (y * 200), 100, 100])
-    print 'backgroundCubes: ', backgroundCubes
     for cube in backgroundCubes:
-        print 'cube: ', cube
         pygame.draw.rect(gameDisplay, darkBrown, [cube[0] % 1000 - 200, cube[1] % 1000 - 200, 100, 100])
         pygame.draw.rect(gameDisplay, darkBrown, [(cube[0] + 100) % 1000 - 200, (cube[1] + 100) % 1000 - 200, 100, 100])
         pygame.draw.rect(gameDisplay, darkGreen, [(cube[0] + 100) % 1000 - 200, cube[1] % 1000 - 200, 100, 100])
         pygame.draw.rect(gameDisplay, darkGreen, [cube[0] % 1000 - 200, (cube[1] + 100) % 1000 - 200, 100, 100])
 
+    # draw level, character
     pygame.draw.rect(gameDisplay, green, [level1[0], level1[1], level1[2], level1[3]])
     pygame.draw.rect(gameDisplay, green, [level2[0], level2[1], level2[2], level2[3]])
     pygame.draw.rect(gameDisplay, red, [position[0], position[1], position[2], position[3]])    
+    pygame.draw.rect(gameDisplay, black, [500, 500, 50, 50])
+
+    # monster movements
+    magnitude = 2
+    for monster in monsters:
+        if isClose(position, monster, 400):
+            print 'is close'
+            newMonster = moveCloser(monster, position, magnitude)
+            monster[0] = newMonster[0]
+            monster[1] = newMonster[1]
+        pygame.draw.rect(gameDisplay, black, [monster[0] + worldPosition[0], monster[1] + worldPosition[1], monster[2], monster[3]])
 
     # player animations
     if moveDirection == 'w':
@@ -156,7 +185,6 @@ while not gameExit:
             bullet_pos[0] = position[0] + 20
             bullet_pos[1] = position[1] + 8
             bulletVector = [10, 0]
-            score += 10
     if pressed[pygame.K_v]:
             score = 0
     if pressed[pygame.K_b]:
