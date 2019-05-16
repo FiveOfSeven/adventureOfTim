@@ -18,13 +18,21 @@ pygame.init()
 
 def moveCloser(monster, position, magnitude):
     # later you should take into account when the vector is 0
-    vector = [position[0] - monster[0], position[1] - monster[1]]
-    normalizedVector = [vector[0] * magnitude / vector[0], vector[1] * magnitude / vector[1]]
-    newMonster = [normalizedVector[0] + monster[0], normalizedVector[1] + monster[1]]
-    print 'vector', vector
-    print 'normalizedVector', normalizedVector
-    print 'newMonster', newMonster
-    return newMonster
+    # position is opposite of the actual position so make opposite position
+    print 'begining monster', monster
+    print 'begining position', position
+    opositePosition = [-position[0], -position[1]]
+    vector = [opositePosition[0] - monster[0], opositePosition[1] - monster[1]]
+    # if the vector is 0, don't do anything
+    if vector[0] == 0 or vector[1] == 0:
+        return monster
+    else:
+        normalizedVector = [vector[0] * magnitude / vector[0], vector[1] * magnitude / vector[1]]
+        newMonster = [normalizedVector[0] + monster[0], normalizedVector[1] + monster[1]]
+        print 'vector', vector
+        print 'normalizedVector', normalizedVector
+        print 'newMonster', newMonster
+        return newMonster
  
 def isClose(square1, square2, maxDistance):
     print 'in isClose'
@@ -33,6 +41,8 @@ def isClose(square1, square2, maxDistance):
     x = square2[0] - square1[0]
     y = square2[1] - square1[1]
     realDistance = math.sqrt(x**2 + y**2)
+    print 'square1', square1
+    print 'square2', square2
     print 'x', x
     print 'y', y
     print 'realDistance', realDistance
@@ -75,7 +85,7 @@ scoreRequirements = [50]
 # moveDirection wasd determines player gun direction
 moveDirection = 'w'
 # monsterCube
-monsters = [[500, -500, 50, 50], [2000, 500, 50, 50]]
+monsters = [[400, 400, 50, 50]]
 
 
 
@@ -104,17 +114,32 @@ while not gameExit:
     pygame.draw.rect(gameDisplay, green, [level1[0], level1[1], level1[2], level1[3]])
     pygame.draw.rect(gameDisplay, green, [level2[0], level2[1], level2[2], level2[3]])
     pygame.draw.rect(gameDisplay, red, [position[0], position[1], position[2], position[3]])    
-    pygame.draw.rect(gameDisplay, black, [500, 500, 50, 50])
 
     # monster movements
-    magnitude = 2
+    magnitude = 0.05
     for monster in monsters:
-        if isClose(position, monster, 400):
-            print 'is close'
-            newMonster = moveCloser(monster, position, magnitude)
-            monster[0] = newMonster[0]
+        #playerGlobalPosition = [position[0] + worldPosition[0], position[1] + worldPosition[1]]
+        print 'in monster'
+        print 'monster', monster
+        print 'worldPosition', worldPosition
+        print 'position', position
+        characterPosition = [position[0] - worldPosition[0], position[1] - worldPosition[1]]
+        print 'characterPosition', characterPosition
+        #isCloseBool = isClose(worldPosition, monster, 400)
+        isCloseBool = isClose(characterPosition, monster, 400)
+        print 'isClose:', isCloseBool
+        if isCloseBool:
+            print 'in isCloseBool'
+            print 'worldPosition', worldPosition
+            newMonster = moveCloser(monster, worldPosition, magnitude)
+            print 'new monster', newMonster
+            monster[0] = newMonster[0] 
             monster[1] = newMonster[1]
-        pygame.draw.rect(gameDisplay, black, [monster[0] + worldPosition[0], monster[1] + worldPosition[1], monster[2], monster[3]])
+            pygame.draw.rect(gameDisplay, (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)), [monster[0] + worldPosition[0], monster[1] + worldPosition[1], monster[2], monster[3]])
+        else:
+            pygame.draw.rect(gameDisplay, black, [monster[0] + worldPosition[0], monster[1] + worldPosition[1], monster[2], monster[3]])
+            #pygame.draw.rect(gameDisplay, (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)), [monster[0] + worldPosition[0], monster[1] + worldPosition[1], monster[2], monster[3]])
+        #pygame.draw.rect(gameDisplay, black, [monster[0], monster[1], monster[2], monster[3]])
 
     # player animations
     if moveDirection == 'w':
