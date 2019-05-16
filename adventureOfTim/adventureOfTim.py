@@ -21,13 +21,16 @@ def moveCloser(monster, position, magnitude):
     # position is opposite of the actual position so make opposite position
     print 'begining monster', monster
     print 'begining position', position
-    opositePosition = [-position[0], -position[1]]
-    vector = [opositePosition[0] - monster[0], opositePosition[1] - monster[1]]
+    #opositePosition = [-position[0], -position[1]]
+    vector = [position[0] - monster[0], position[1] - monster[1]]
     # if the vector is 0, don't do anything
+    x = monster[0] - position[0]
+    y = monster[1] - position[1]
+    realDistance = math.sqrt(x**2 + y**2)
     if vector[0] == 0 or vector[1] == 0:
         return monster
     else:
-        normalizedVector = [vector[0] * magnitude / vector[0], vector[1] * magnitude / vector[1]]
+        normalizedVector = [vector[0] * magnitude / realDistance, vector[1] * magnitude / realDistance]
         newMonster = [normalizedVector[0] + monster[0], normalizedVector[1] + monster[1]]
         print 'vector', vector
         print 'normalizedVector', normalizedVector
@@ -116,7 +119,7 @@ while not gameExit:
     pygame.draw.rect(gameDisplay, red, [position[0], position[1], position[2], position[3]])    
 
     # monster movements
-    magnitude = 0.05
+    magnitude = 0.8
     for monster in monsters:
         #playerGlobalPosition = [position[0] + worldPosition[0], position[1] + worldPosition[1]]
         print 'in monster'
@@ -131,7 +134,7 @@ while not gameExit:
         if isCloseBool:
             print 'in isCloseBool'
             print 'worldPosition', worldPosition
-            newMonster = moveCloser(monster, worldPosition, magnitude)
+            newMonster = moveCloser(monster, characterPosition, magnitude)
             print 'new monster', newMonster
             monster[0] = newMonster[0] 
             monster[1] = newMonster[1]
