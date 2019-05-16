@@ -88,7 +88,7 @@ scoreRequirements = [50]
 # moveDirection wasd determines player gun direction
 moveDirection = 'w'
 # monsterCube
-monsters = [[400, 400, 50, 50]]
+monsters = [[900, 800, 50, 50], [-500, -500, 50, 50]]
 
 
 
@@ -119,17 +119,17 @@ while not gameExit:
     pygame.draw.rect(gameDisplay, red, [position[0], position[1], position[2], position[3]])    
 
     # monster movements
-    magnitude = 0.8
+    magnitude = 5
     for monster in monsters:
         #playerGlobalPosition = [position[0] + worldPosition[0], position[1] + worldPosition[1]]
         print 'in monster'
         print 'monster', monster
         print 'worldPosition', worldPosition
         print 'position', position
-        characterPosition = [position[0] - worldPosition[0], position[1] - worldPosition[1]]
+        characterPosition = [position[0] - worldPosition[0] - 20, position[1] - worldPosition[1] - 20]
         print 'characterPosition', characterPosition
         #isCloseBool = isClose(worldPosition, monster, 400)
-        isCloseBool = isClose(characterPosition, monster, 400)
+        isCloseBool = isClose(characterPosition, monster, 200)
         print 'isClose:', isCloseBool
         if isCloseBool:
             print 'in isCloseBool'
@@ -225,8 +225,8 @@ while not gameExit:
         newPosition[1] -= playerSpeed
         if col_detect(newPosition, wallCubes):
             pass
-        elif position[1] <= 200:
-            position[1] = 200
+        elif position[1] <= 250:
+            position[1] = 250
             worldPosition[1] += playerSpeed
             for cube in landCubes:
                 cube[1] = ((cube[1] + playerSpeed + 1000) % 3000) - 1000
@@ -242,8 +242,8 @@ while not gameExit:
         newPosition[1] += playerSpeed
         if col_detect(newPosition, wallCubes):
             pass
-        elif position[1] >= 400:
-            position[1] = 400
+        elif position[1] >= 350:
+            position[1] = 350
             worldPosition[1] -= playerSpeed
             for cube in landCubes:
                 cube[1] = ((cube[1] - playerSpeed + 1000) % 3000) - 1000
@@ -259,8 +259,8 @@ while not gameExit:
         newPosition[0] -= playerSpeed
         if col_detect(newPosition, wallCubes):
             pass
-        elif position[0] <= 200:
-            position[0] = 200
+        elif position[0] <= 300:
+            position[0] = 300
             worldPosition[0] += playerSpeed
             for cube in landCubes:
                 cube[0] = ((cube[0] + playerSpeed + 1000) % 3000) - 1000
@@ -276,8 +276,8 @@ while not gameExit:
         newPosition[0] += playerSpeed
         if col_detect(newPosition, wallCubes):
             pass
-        elif position[0] >= 600:
-            position[0] = 600
+        elif position[0] >= 500:
+            position[0] = 500
             worldPosition[0] -= playerSpeed
             #for cube in backgroundCubes:
             #    cube[0] = ((cube[0] - playerSpeed + 1000) % 3000) - 1000
