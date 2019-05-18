@@ -1,4 +1,19 @@
 import pdb
+import math
+
+
+def moveCloser(monster, position, magnitude):
+    # later you should take into account when the vector is 0
+    # position is opposite of the actual position so make opposite position
+    #opositePosition = [-position[0], -position[1]]
+    vector = [position[0] - monster[0], position[1] - monster[1]]
+    # if the vector is 0, don't do anything
+    x = monster[0] - position[0]
+    y = monster[1] - position[1]
+    realDistance = math.sqrt(x**2 + y**2)
+    normalizedVector = [vector[0] * magnitude / realDistance, vector[1] * magnitude / realDistance]
+    newMonster = [normalizedVector[0] + monster[0], normalizedVector[1] + monster[1]]
+    return newMonster
 
 def col_detect(squareA, squareB):
     collision = False
@@ -27,6 +42,7 @@ def col_detect(squareA, squareB):
             collision = True
     return collision or subCollision
 
+# for detecting when jumping on platforms
 def platform_detect(squareA, squareArrayB):
     #squareA is the player, squareB is the platform
     return_value = False

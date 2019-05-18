@@ -10,45 +10,19 @@ import sys
 sys.path.insert(0, './gameClasses')
 sys.path.insert(0, './adventureOfTim/gameClasses')
 from Enemy import Enemy
-from defsPygame1 import col_detect, platform_detect
+from defsPygame1 import col_detect, platform_detect, moveCloser
 from platformer import platformer, deleteBottomSquares
 from threeD import threeD
 
 pygame.init()
 
-def moveCloser(monster, position, magnitude):
-    # later you should take into account when the vector is 0
-    # position is opposite of the actual position so make opposite position
-    print 'begining monster', monster
-    print 'begining position', position
-    #opositePosition = [-position[0], -position[1]]
-    vector = [position[0] - monster[0], position[1] - monster[1]]
-    # if the vector is 0, don't do anything
-    x = monster[0] - position[0]
-    y = monster[1] - position[1]
-    realDistance = math.sqrt(x**2 + y**2)
-    if vector[0] == 0 or vector[1] == 0:
-        return monster
-    else:
-        normalizedVector = [vector[0] * magnitude / realDistance, vector[1] * magnitude / realDistance]
-        newMonster = [normalizedVector[0] + monster[0], normalizedVector[1] + monster[1]]
-        print 'vector', vector
-        print 'normalizedVector', normalizedVector
-        print 'newMonster', newMonster
-        return newMonster
  
 def isClose(square1, square2, maxDistance):
-    print 'in isClose'
     # pythagorean theorum 
     returnBool = False
     x = square2[0] - square1[0]
     y = square2[1] - square1[1]
     realDistance = math.sqrt(x**2 + y**2)
-    print 'square1', square1
-    print 'square2', square2
-    print 'x', x
-    print 'y', y
-    print 'realDistance', realDistance
     if realDistance <= maxDistance:
         returnBool = True
     return returnBool
@@ -88,7 +62,7 @@ scoreRequirements = [50]
 # moveDirection wasd determines player gun direction
 moveDirection = 'w'
 # monsterCube
-monsters = [[900, 800, 50, 50], [-500, -500, 50, 50]]
+monsters = [[800, 800, 50, 50], [900, 800, 50, 50], [-500, -500, 50, 50]]
 
 
 
@@ -122,27 +96,20 @@ while not gameExit:
     magnitude = 5
     for monster in monsters:
         #playerGlobalPosition = [position[0] + worldPosition[0], position[1] + worldPosition[1]]
-        print 'in monster'
-        print 'monster', monster
-        print 'worldPosition', worldPosition
-        print 'position', position
         characterPosition = [position[0] - worldPosition[0] - 20, position[1] - worldPosition[1] - 20]
-        print 'characterPosition', characterPosition
-        #isCloseBool = isClose(worldPosition, monster, 400)
         isCloseBool = isClose(characterPosition, monster, 200)
-        print 'isClose:', isCloseBool
+        # monster is attacking
         if isCloseBool:
-            print 'in isCloseBool'
-            print 'worldPosition', worldPosition
             newMonster = moveCloser(monster, characterPosition, magnitude)
-            print 'new monster', newMonster
             monster[0] = newMonster[0] 
             monster[1] = newMonster[1]
             pygame.draw.rect(gameDisplay, (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)), [monster[0] + worldPosition[0], monster[1] + worldPosition[1], monster[2], monster[3]])
+            print col_detect(monster, position)
+            if col_detect(monster, position):
+                score -= 1
+        # monster is sleeping
         else:
             pygame.draw.rect(gameDisplay, black, [monster[0] + worldPosition[0], monster[1] + worldPosition[1], monster[2], monster[3]])
-            #pygame.draw.rect(gameDisplay, (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)), [monster[0] + worldPosition[0], monster[1] + worldPosition[1], monster[2], monster[3]])
-        #pygame.draw.rect(gameDisplay, black, [monster[0], monster[1], monster[2], monster[3]])
 
     # player animations
     if moveDirection == 'w':
