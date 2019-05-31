@@ -63,6 +63,7 @@ scoreRequirements = [50]
 moveDirection = 'w'
 # monsterCube
 monsters = [[800, 800, 50, 50], [900, 800, 50, 50], [-500, -500, 50, 50]]
+spawnLocations = [[-1000, -1000], [-1000, 1000], [1000, -1000], [1000, 1000], [-2000, -2000], [-2000, 2000], [2000, -2000], [2000, 2000]]
 
 
 
@@ -94,10 +95,12 @@ while not gameExit:
 
     # monster movements
     magnitude = 5
+    characterPosition = [position[0] - worldPosition[0] - 20, position[1] - worldPosition[1] - 20, 50, 50]
+    print 'player location', characterPosition[0], characterPosition[1]
     for monster in monsters:
         #playerGlobalPosition = [position[0] + worldPosition[0], position[1] + worldPosition[1]]
-        characterPosition = [position[0] - worldPosition[0] - 20, position[1] - worldPosition[1] - 20]
         isCloseBool = isClose(characterPosition, monster, 200)
+
         # monster is attacking
         if isCloseBool:
             newMonster = moveCloser(monster, characterPosition, magnitude)
@@ -105,8 +108,12 @@ while not gameExit:
             monster[1] = newMonster[1]
             pygame.draw.rect(gameDisplay, (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)), [monster[0] + worldPosition[0], monster[1] + worldPosition[1], monster[2], monster[3]])
             print col_detect(monster, position)
-            if col_detect(monster, position):
+            if col_detect(monster, characterPosition):
                 score -= 1
+                randomLocation = random.randint(0, len(spawnLocations) - 1)
+                monster[0] = spawnLocations[randomLocation][0]
+                monster[1] = spawnLocations[randomLocation][1]
+
         # monster is sleeping
         else:
             pygame.draw.rect(gameDisplay, black, [monster[0] + worldPosition[0], monster[1] + worldPosition[1], monster[2], monster[3]])

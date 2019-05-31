@@ -1,4 +1,4 @@
-make it so there are enemies in the adventureOfTim main level
+make is it so monsters will respawn when colliding with the player position, and go into a pokemon game.
 make a scrolling level with sublevels that will spawn based on player position. if palyer goes past modulus 1000, add the next subarray of platforms.(mario platformer)
 hide easter eggs in main level that give score points. when you find it, it respawns in a random location. most of the time 10, sometimes 20, 50, 100
 create a store level
